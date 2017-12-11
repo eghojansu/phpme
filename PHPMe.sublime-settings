@@ -1,0 +1,45 @@
+{
+    // namespace and relative path to current folder pairs, trailing slash/backslash are optional.
+    // relative path can be array
+    //
+    // @type: json (mimic composer.json autoload psr4 or psr0 schema)
+    // Example:
+    // {
+    //      "App\\": "src/",
+    //      "App\\Test\\": "tests/src/"
+    //      "AnotherNamespace\\": ["other/", "other2/"]
+    // }
+    "namespaces": {},
+
+    // Pattern to exclude dirs
+    // @type: string[]
+    "exclude_dir": [],
+
+    // Need the php binary to work
+    // @type: boolean
+    "allow_use_from_global_namespace" : true,
+
+    // Sort the list of use statements by their line length
+    // @type: boolean
+    "use_sort_length": false,
+
+    // Copy comment doc from parent or interface to implemented class
+    // @type: enum("none", "copy", "inheritdoc")
+    "docblock_inherit": "none",
+
+    // Add leading backslash
+    // @type: boolean
+    "prefix_fqcn": true,
+
+    // Generate docblocks for getter/setter
+    // @type: boolean
+    "generate_docblock": false,
+
+    // Make setter chainable (return $this)
+    // @type: boolean
+    "setter_chainable": true,
+
+    // Keyword for static property
+    // @type: enum("static", "self")
+    "static_property": "static"
+}

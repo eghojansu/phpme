@@ -1,0 +1,12 @@
+Congratulations!
+----------------
+
+You have been installed PHPMe Package.
+
+We wish your PHP coding session will be more fun. :)
+
+
+happy coding,
+
+Eko Kurniawan
+(Web Developer)

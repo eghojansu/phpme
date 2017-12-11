@@ -1,0 +1,45 @@
+[
+    {
+        "caption": "PHPMe: Insert Namespace",
+        "command": "phpme_insert_namespace"
+    },
+    {
+        "caption": "PHPMe: Use Class",
+        "command": "phpme_use_class"
+    },
+    {
+        "caption": "PHPMe: Expand Fully Qualified Class Name",
+        "command": "phpme_expand_fqcn"
+    },
+    {
+        "caption": "PHPMe: Implement Interface",
+        "command": "phpme_implements"
+    },
+    {
+        "caption": "PHPMe: Override Method",
+        "command": "phpme_override_method"
+    },
+    {
+        "caption": "PHPMe: Generate Getter",
+        "command": "phpme_getter_setter",
+        "args": {"mode": 1}
+    },
+    {
+        "caption": "PHPMe: Generate Setter",
+        "command": "phpme_getter_setter",
+        "args": {"mode": 2}
+    },
+    {
+        "caption": "PHPMe: Generate Getter and Setter",
+        "command": "phpme_getter_setter",
+        "args": {"mode": 3}
+    },
+    {
+        "caption": "PHPMe: Generate Constructor",
+        "command": "phpme_generate_constructor"
+    },
+    {
+        "caption": "PHPMe: Goto Definition Scope",
+        "command": "phpme_goto_definition_scope"
+    }
+]
