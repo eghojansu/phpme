@@ -1,1 +1,21 @@
-from .phpme.command import *
+from .phpme.command.phpme_insert_namespace_command import PhpmeInsertNamespaceCommand
+
+from .phpme.command.phpme_use_class_command import PhpmeUseClassCommand
+from .phpme.command.phpme_post_use_class_command import PhpmePostUseClassCommand
+
+from .phpme.command.phpme_expand_fqcn_command import PhpmeExpandFqcnCommand
+from .phpme.command.phpme_post_expand_fqcn_command import PhpmePostExpandFqcnCommand
+
+from .phpme.command.phpme_implements_command import PhpmeImplementsCommand
+from .phpme.command.phpme_post_implements_command import PhpmePostImplementsCommand
+
+from .phpme.command.phpme_override_method_command import PhpmeOverrideMethodCommand
+from .phpme.command.phpme_post_override_method_command import PhpmePostOverrideMethodCommand
+
+from .phpme.command.phpme_getter_setter_command import PhpmeGetterSetterCommand
+from .phpme.command.phpme_post_getter_setter_command import PhpmePostGetterSetterCommand
+
+from .phpme.command.phpme_generate_constructor_command import PhpmeGenerateConstructorCommand
+from .phpme.command.phpme_post_generate_constructor_command import PhpmePostGenerateConstructorCommand
+
+from .phpme.command.phpme_goto_definition_scope_command import PhpmeGotoDefinitionScopeCommand
