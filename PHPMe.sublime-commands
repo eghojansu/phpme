@@ -41,5 +41,9 @@
     {
         "caption": "PHPMe: Goto Definition Scope",
         "command": "phpme_goto_definition_scope"
+    },
+    {
+        "caption": "PHPMe: Insert Project Meta",
+        "command": "phpme_project_meta"
     }
 ]

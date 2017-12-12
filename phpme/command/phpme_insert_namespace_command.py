@@ -17,7 +17,7 @@ class PhpmeInsertNamespaceCommand(sublime_plugin.TextCommand, PhpmeCommand):
                 self.print_message('No php area')
 
     def replace_namespace(self, edit):
-        region = self.view.find(r'namespace\s+[^;]+;', 0)
+        region = self.view.find(r'^namespace\s+[^;]+;', 0)
         if not region.empty():
             replace_region = sublime.Region(region.begin()+10, region.end()-1)
             self.view.replace(edit, replace_region, self.namespace)

@@ -99,9 +99,9 @@ class PhpmeImplementsCommand(sublime_plugin.TextCommand, PhpmeCommand):
             return
 
         for alias, namespace in mdef['implements'].items():
-            interface = alias.split('\\')[-1]
+            symbol = alias.split('\\')[-1]
             interface_namespace = namespace if namespace else alias
-            for namespaces in self.find_symbol(interface):
+            for namespaces in self.find_symbol(symbol):
                 if namespaces[0] == interface_namespace:
                     methods = self.parse_class_tree(None, namespaces[0], namespaces[1])
                     for namespace, namespace_methods in methods.items():

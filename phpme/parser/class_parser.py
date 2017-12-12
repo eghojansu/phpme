@@ -30,7 +30,7 @@ class ClassParser:
         return content
 
     def same_dir_namespace(self, alias):
-        if self.file and self.result['namespace']:
+        if self.file and self.result['namespace'] and alias != os.path.basename(self.file).split('.')[0]:
             pfile = os.path.dirname(self.file) + '/' + Utils.fixslash(alias) + '.php'
             if os.path.isfile(pfile):
                 return self.result['namespace'] + '\\' + alias;
@@ -169,25 +169,19 @@ class ClassParser:
                 # parse interfaces
                 if len(rest) > 1 and rest[1].strip():
                     for interface in rest[1].strip().split(','):
-                        interface = interface.strip().strip('\\')
-                        if interface in self.result['uses']:
-                            self.result['implements'][interface] = self.result['uses'][interface]
-                        else:
-                            self.result['implements'][interface] = self.same_dir_namespace(interface)
+                        found = self.find_used_use(interface.strip())
+                        if found:
+                            self.result['implements'][found[0]] = found[1]
                 # parse parent
                 if rest[0].strip():
                     x = rest[0].strip().split('extends')
                     if len(x) > 1 and x[-1].strip():
-                        parent = x[-1].strip().strip('\\')
-                        if parent in self.result['uses']:
+                        parent = x[-1]
+                        found = self.find_used_use(parent.strip())
+                        if found:
                             self.result['parent'] = {
-                                'alias': parent,
-                                'namespace': self.result['uses'][parent]
-                            }
-                        else:
-                            self.result['parent'] = {
-                                'alias': parent,
-                                'namespace': self.same_dir_namespace(parent)
+                                'alias': found[0],
+                                'namespace': found[1]
                             }
 
             return True
@@ -214,7 +208,7 @@ class ClassParser:
                     match_hint = re.search(r'@var\s+([\w\\]+)', docblocks)
                     if match_hint:
                         hint = match_hint.group(1)
-                        found = self.find_used_uses(hint)
+                        found = self.find_hint(hint)
                         if found:
                             uses[found[0]] = found[1]
 
@@ -285,19 +279,28 @@ class ClassParser:
         type_hints = re.findall(r'([\w\\]+)\s+\$', line)
         if type_hints:
             for hint in type_hints:
-                found = self.find_used_uses(hint)
+                found = self.find_hint(hint)
                 if found:
                     uses[found[0]] = found[1]
 
         return uses
 
-    def find_used_uses(self, symbol):
+    def find_hint(self, symbol):
         excludes = r'(null|array|bool|boolean|string|int|integer|long|object|resource|float|double|decimal|real|numeric)'
         if not re.search(excludes, symbol):
             if symbol in self.result['uses']:
                 return (symbol, self.result['uses'][symbol])
             else:
                 return (symbol, self.same_dir_namespace(symbol))
+
+    def find_used_use(self, namespace):
+        if namespace.startswith('\\'):
+            return (namespace.strip('\\'), None)
+        else:
+            if namespace in self.result['uses']:
+                return (namespace, self.result['uses'][namespace])
+            else:
+                return (namespace, self.same_dir_namespace(namespace))
 
     def find_docblocks(self, line_end, lines):
         if line_end < 1:

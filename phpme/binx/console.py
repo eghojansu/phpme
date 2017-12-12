@@ -26,12 +26,20 @@ class Console():
 
         return []
 
+    def git_config(config):
+        try:
+            return subprocess.check_output(['git', 'config', '--get', config]).decode('utf-8')
+        except Exception as e:
+            print('[Phpme]', 'error: ' + str(e))
+
     def run_command(command, args):
-        console = os.path.dirname(os.path.abspath(__file__)) + '/console.php'
-        output = subprocess.check_output(['php', '-f', console, command] + args).decode('utf-8')
+        try:
+            console = os.path.dirname(os.path.abspath(__file__)) + '/console.php'
+            output = subprocess.check_output(['php', '-f', console, command] + args).decode('utf-8')
 
-        if output.startswith('error'):
-            print(output)
-            return
-
-        return output
+            if output.startswith('error'):
+                print('[Phpme]', output)
+            else:
+                return output
+        except Exception as e:
+            print('[Phpme]', 'error: ' + str(e))

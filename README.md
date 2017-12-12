@@ -83,6 +83,12 @@ To use this feature you need to put cursor on a method name, then trigger this c
 
 (Not support multiple cursor).
 
+### project_meta
+
+Generate project meta for current file. Template can be configured, see setting below.
+
+To use this feature you do not need to put cursor on valid symbol, just trigger this command.
+
 ## Settings
 
 Settings can be stored either in your system wide "PHPMe.sublime-settings" file or in the project
@@ -165,6 +171,48 @@ Keyword to use for static property.
 
 Type: string, valid options are "static" or "self" defaults to "static"
 
+### project_meta
+
+Generate project meta template.
+Available placeholder:
+- project:
+
+  Defaults to project name in composer.json (if available)
+
+- type:
+
+  Defaults to project type in composer.json (if available)
+
+- author:
+
+  First, read from composer.json, if not available get from git config,
+  if not available get from current login user
+
+- email:
+
+  First, read from composer.json, if not available get from git config
+
+- time:
+
+  For time placeholder, you can add time format as parameter. (See this [link][6])
+
+Type: string[], defaults to:
+```json
+{
+    "project_meta": [
+        "This file is part of the {project} {type}.",
+        "",
+        "(c) {author} <{email}>",
+        "",
+        "For the full copyright and license information, please view the LICENSE",
+        "file that was distributed with this source code.",
+        "",
+        "Created at {time(%b %d, %Y %H:%I)}"
+    ]
+}
+```
+
+
 ## Keybinding
 
 This plugin do not provide keybindings. You will have to install your own shortcuts. This examples will give you the shortcuts I personally use.
@@ -203,3 +251,4 @@ ekokurniawan
 [3]: https://github.com/eghojansu/phpme/issues
 [4]: https://packagecontrol.io/packages/PHP%20Companion
 [5]: https://packagecontrol.io/installation
+[6]: https://docs.python.org/2/library/datetime.html#strftime-and-strptime-behavior

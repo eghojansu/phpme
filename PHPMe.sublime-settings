@@ -41,5 +41,20 @@
 
     // Keyword for static property
     // @type: enum("static", "self")
-    "static_property": "static"
+    "static_property": "static",
+
+    // Project meta, available placeholder project, type, author, email and time
+    // For time placeholder, you can add time format as parameter
+    // (https://docs.python.org/2/library/datetime.html#strftime-and-strptime-behavior)
+    // @type: string[]
+    "project_meta": [
+        "This file is part of the {project} {type}.",
+        "",
+        "(c) {author} <{email}>",
+        "",
+        "For the full copyright and license information, please view the LICENSE",
+        "file that was distributed with this source code.",
+        "",
+        "Created at {time(%b %d, %Y %H:%M)}"
+    ]
 }

@@ -163,8 +163,8 @@ class PhpmeCommand():
             if mdef['methods']:
                 result[namespace] = mdef['methods']
                 if mdef['parent']:
-                    parent = mdef['parent']['alias'].split('\\')[-1]
                     parent_namespace = mdef['parent']['namespace'] if mdef['parent']['namespace'] else mdef['parent']['alias']
+                    parent = parent_namespace.split('\\')[-1]
                     for namespace in self.find_symbol(parent):
                         if namespace[0] == parent_namespace:
                             result.update(self.parse_class_tree(ctype, namespace[0], namespace[1]))

@@ -17,7 +17,10 @@ class Utils:
         composer.json file location (assume on its project dir)
         """
         if os.path.isfile(project_dir + 'composer.json'):
-            return json.load(open(project_dir + 'composer.json'))
+            try:
+                return json.load(open(project_dir + 'composer.json'))
+            except Exception as e:
+                pass
 
     def composer_autoload(project_dir):
         """
@@ -33,3 +36,21 @@ class Utils:
                         autoload.update(composer[key][psr])
 
         return autoload
+
+    def composer_value(project_dir, key):
+        """
+        Get project value
+        """
+        composer = Utils.composer_json(project_dir)
+        if composer and key in composer:
+            return composer[key]
+
+    def composer_author(project_dir):
+        """
+        Get single author from composer.json
+        """
+        author = Utils.composer_value(project_dir, 'author')
+        if author and isinstance(author, list):
+            author = author[0]
+
+        return author

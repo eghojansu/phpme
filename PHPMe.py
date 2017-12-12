@@ -19,3 +19,5 @@ from .phpme.command.phpme_generate_constructor_command import PhpmeGenerateConst
 from .phpme.command.phpme_post_generate_constructor_command import PhpmePostGenerateConstructorCommand
 
 from .phpme.command.phpme_goto_definition_scope_command import PhpmeGotoDefinitionScopeCommand
+
+from .phpme.command.phpme_project_meta_command import PhpmeProjectMetaCommand

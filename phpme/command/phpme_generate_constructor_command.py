@@ -21,7 +21,8 @@ class PhpmeGenerateConstructorCommand(sublime_plugin.TextCommand, PhpmeCommand):
             if len(self.list_properties) > 0:
                 options = [
                     ['Pick All', 'pick all properties'],
-                    ['Pick Some', 'pick multiple properties one by one']
+                    ['Pick Some', 'pick multiple properties one by one'],
+                    ['Pick None', 'pick no property']
                 ]
                 self.view.window().show_quick_panel(options+self.list_properties, self.op_property_selected)
             else:
@@ -32,11 +33,10 @@ class PhpmeGenerateConstructorCommand(sublime_plugin.TextCommand, PhpmeCommand):
             # ask again
             options = [['Done', 'done selecting property']]
             self.view.window().show_quick_panel(options+self.list_properties, self.op_property_selected)
-        else:
+        elif self.collect_progress == 2:
             self.view.run_command('phpme_post_generate_constructor', {'methods': self.generate_method(), 'fqcn': self.fqcn})
-
-    def no_property_to_select(self):
-        return len(self.list_properties) == 0
+        else:
+            self.print_message('Cancel constructor generation')
 
     def pick_property(self, index):
         prop = self.list_properties[index][0][1:]
@@ -51,8 +51,11 @@ class PhpmeGenerateConstructorCommand(sublime_plugin.TextCommand, PhpmeCommand):
                     self.collect_progress = 2
                 elif index == 1:
                     self.collect_progress = 1
+                elif index == 2:
+                    self.selected_properties.clear()
+                    self.collect_progress = 2
                 else:
-                    self.pick_property(index - 2)
+                    self.pick_property(index - 3)
                     self.collect_progress = 2
             elif self.collect_progress == 1:
                 if index == 0:
@@ -60,10 +63,8 @@ class PhpmeGenerateConstructorCommand(sublime_plugin.TextCommand, PhpmeCommand):
                 else:
                     self.pick_property(index - 1)
         else:
-            self.list_properties = []
+            self.collect_progress = 3
 
-        if self.no_property_to_select():
-            self.collect_progress = 2
         self.run_schedule()
 
     def find_variables(self):
@@ -80,8 +81,12 @@ class PhpmeGenerateConstructorCommand(sublime_plugin.TextCommand, PhpmeCommand):
         self.fqcn = mdef['fqcn']
         self.generate_docblock = self.get_setting('generate_docblock', False)
         self.properties = mdef['properties']
-        for prop, pdef in mdef['properties'].items():
-            self.list_properties.append(['${}'.format(prop), pdef['hint'] if pdef['hint'] else 'mixed'])
+        for prop in list(mdef['properties'].keys()):
+            pdef = mdef['properties'][prop]
+            if pdef['static']:
+                del self.properties[prop]
+            else:
+                self.list_properties.append(['${}'.format(prop), pdef['hint'] if pdef['hint'] else 'mixed'])
 
         return True
 
