@@ -1,8 +1,5 @@
-## 2017-11-12
-
-- Initial release
-
-## 2017-11-12
+v1.1.0 2017-11-12
+-----------------
 
 Add generate project meta command
 
