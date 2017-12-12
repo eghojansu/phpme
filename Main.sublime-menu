@@ -18,6 +18,16 @@
                             {
                                 "command": "open_file", "args":
                                 {
+                                    "file": "${packages}/PHPMe/README.md"
+                                },
+                                "caption": "README"
+                            },
+                            {
+                                "caption": "-"
+                            },
+                            {
+                                "command": "open_file", "args":
+                                {
                                     "file": "${packages}/PHPMe/PHPMe.sublime-settings"
                                 },
                                 "caption": "Settings – Default"
@@ -28,6 +38,16 @@
                                     "file": "${packages}/User/PHPMe.sublime-settings"
                                 },
                                 "caption": "Settings – User"
+                            },
+                            {
+                                "caption": "-"
+                            },
+                            {
+                                "command": "open_file", "args":
+                                {
+                                    "file": "${packages}/PHPMe/LICENSE"
+                                },
+                                "caption": "LICENSE"
                             }
                         ]
                     }
