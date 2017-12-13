@@ -1,4 +1,8 @@
 {
+    // PHP version you are working on
+    // @type: bool
+    "php7": false,
+
     // namespace and relative path to current folder pairs, trailing slash/backslash are optional.
     // relative path can be array
     //

@@ -126,9 +126,12 @@ class PhpmeCommand():
         arranged_methods = []
         uses = []
         overriden = []
+        php7 = self.get_setting('php7', False)
         for namespace, methods in namespace_methods.items():
             for method in sorted(methods.keys()):
                 mdef = methods[method]
+                if not php7:
+                    mdef['def'] = ClassParser.remove_native_hint(mdef['def'])
                 overriden.append('::'.join([namespace, method]))
                 arranged_methods.append(self.create_method_stub(method, mdef))
                 if mdef['uses']:

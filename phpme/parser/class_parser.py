@@ -10,6 +10,20 @@ class ClassParser:
         self.content = content
         self.file = file
 
+    def is_native_hint(hint):
+        excludes = r'(null|array|bool|boolean|string|int|integer|long|object|resource|float|double|decimal|real|numeric)'
+
+        return re.search(excludes, hint) != None
+
+    def remove_native_hint(line):
+        type_hints = re.findall(r'(([\w\\]+)\s+)\$', line)
+        if type_hints:
+            for hint in type_hints:
+                if ClassParser.is_native_hint(hint[1]):
+                    line = line.replace(hint[0], '')
+
+        return line
+
     def create(content, file = None):
         return ClassParser(content, file)
 
@@ -286,8 +300,7 @@ class ClassParser:
         return uses
 
     def find_hint(self, symbol):
-        excludes = r'(null|array|bool|boolean|string|int|integer|long|object|resource|float|double|decimal|real|numeric)'
-        if not re.search(excludes, symbol):
+        if not ClassParser.is_native_hint(symbol):
             if symbol in self.result['uses']:
                 return (symbol, self.result['uses'][symbol])
             else:

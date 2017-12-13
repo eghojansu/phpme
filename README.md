@@ -105,6 +105,28 @@ If you're storing settings in a project file, put them in a phpme node like this
 }
 ```
 
+### php7
+
+PHP version you are working on.
+This setting effects on method construction.
+Set to true will add native hint declared on your variable docblock as method parameter hint.
+
+Example:
+```php
+class AClass
+{
+    /** @var string <- this will be used as parameter hint if you generate getter/setter */
+    public $myProperty;
+
+    /**
+     * @var bool <- this will be used as parameter hint if you generate getter/setter
+     */
+    public $mySecondProperty;
+}
+```
+
+Type: bool
+
 ### namespaces
 Namespace and relative path to current folder pairs, trailing slash/backslash are optional.
 Relative path can be array. This configuration mimic composer.json autoload psr-4/psr-0 schema.
@@ -235,7 +257,6 @@ This plugin do not provide keybindings. You will have to install your own shortc
 - This plugin works based on Regex. If you feel this plugin sucks detecting your code, please let me know.
 
   [Submit issues][3].
-- We assume you're working with php7. Any text on docblock for variable will be included as variable type when generate method.
 - We do not support multiple class declaration in one file. As we use regex to detect curly brace (`}`) as the end of class.
 
 
