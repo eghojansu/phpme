@@ -1,4 +1,5 @@
 import sublime, sublime_plugin
+import os
 from ..phpme_command import PhpmeCommand
 from ..parser.class_parser import ClassParser
 
@@ -90,7 +91,8 @@ class PhpmeGetterSetterCommand(sublime_plugin.TextCommand, PhpmeCommand):
             sublime.status_message('File has no content')
             return
 
-        mdef = ClassParser.create(content).parse()
+        file = os.path.abspath(self.view.file_name())
+        mdef = ClassParser.create(content, file).parse()
         if not self.in_class_scope(mdef):
             return
 

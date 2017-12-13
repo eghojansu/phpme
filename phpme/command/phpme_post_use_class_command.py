@@ -6,7 +6,7 @@ class PhpmePostUseClassCommand(sublime_plugin.TextCommand, PhpmeCommand):
     def run(self, edit, namespaces):
         exists = []
         used = []
-        for namespace in namespaces:
+        for namespace in list(set(namespaces)):
             if self.is_already_used(namespace):
                 exists.append(namespace)
             else:

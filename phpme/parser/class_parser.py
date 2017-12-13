@@ -222,7 +222,7 @@ class ClassParser:
                     match_hint = re.search(r'@var\s+([\w\\]+)', docblocks)
                     if match_hint:
                         hint = match_hint.group(1)
-                        found = self.find_used_hint(hint)
+                        found = self.find_used_use(hint)
                         if found:
                             uses[found[0]] = found[1]
 
@@ -293,30 +293,23 @@ class ClassParser:
         type_hints = re.findall(r'([\w\\]+)\s+\$', line)
         if type_hints:
             for hint in type_hints:
-                found = self.find_used_hint(hint)
+                found = self.find_used_use(hint)
                 if found:
                     uses[found[0]] = found[1]
 
         return uses
 
-    def find_used_hint(self, symbol):
-        if not ClassParser.is_native_hint(symbol):
-            if symbol in self.result['uses']:
-                return (symbol, self.result['uses'][symbol])
-            else:
-                for alias, namespace in self.result['uses'].items():
-                    if alias.endswith(symbol) and not namespace:
-                        return (alias, None)
-
     def find_used_use(self, namespace):
-        if namespace.startswith('\\'):
-            return (namespace.strip('\\'), None)
+        namespace = namespace.strip('\\')
+        if not ClassParser.is_native_hint(namespace):
+            if namespace in self.result['uses']:
+                return (namespace, self.result['uses'][namespace])
+            else:
+                for use_alias, use_namespace in self.result['uses'].items():
+                    if use_alias.endswith(namespace) and not use_namespace:
+                        return (use_alias, None)
 
-        hint_ns = self.find_used_hint(namespace)
-        if hint_ns:
-            return hint_ns
-
-        return (namespace, self.same_dir_namespace(namespace))
+                return (namespace, self.same_dir_namespace(namespace))
 
     def find_docblocks(self, line_end, lines):
         if line_end < 1:
