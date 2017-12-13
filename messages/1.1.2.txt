@@ -1,0 +1,5 @@
+v1.1.2 2017-11-13
+-----------------
+
+- Fix use same class in same namespace
+- Fix generate getter setter command

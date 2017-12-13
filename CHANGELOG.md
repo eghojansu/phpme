@@ -13,3 +13,8 @@ Add generate project meta command
 ## 2017-11-13
 
 Add option to enable php7 coding session
+
+## 2017-11-13 - v1.1.2
+
+- Fix use same class in same namespace
+- Fix generate getter setter command
