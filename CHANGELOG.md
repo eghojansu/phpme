@@ -30,3 +30,7 @@ Add option to enable php7 coding session
 
 - Update getter_setter message
 - Fix properties getter/setter order
+
+## 2017-11-16
+
+- Fix generate getter/setter method name

@@ -3,6 +3,7 @@ import sublime_plugin
 import os
 import operator
 from ..helper import Helper
+from ..utils import Utils
 from ..constant import Constant
 from ..parser.class_parser import ClassParser
 
@@ -83,8 +84,9 @@ class PhpmeGetterSetterCommand(sublime_plugin.TextCommand):
 
     def find_variables(self, mdef, mode):
         for pdef in mdef['properties']:
-            getter_method = 'get{}'.format(pdef['name'].capitalize())
-            setter_method = 'set{}'.format(pdef['name'].capitalize())
+            name = Utils.ucfirst(pdef['name'])
+            getter_method = 'get{}'.format(name)
+            setter_method = 'set{}'.format(name)
             var = '$' + pdef['name']
 
             if (((mode & Constant.gen_getter) and (getter_method not in mdef['methods']))

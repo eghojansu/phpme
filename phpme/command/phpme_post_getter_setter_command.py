@@ -1,5 +1,6 @@
 import sublime_plugin
 from ..helper import Helper
+from ..utils import Utils
 from ..constant import Constant
 
 
@@ -49,7 +50,7 @@ class PhpmePostGetterSetterCommand(sublime_plugin.TextCommand):
 
     def generate_getter(self, pdef, option):
         prop = pdef['name']
-        method = 'get{}'.format(prop.capitalize())
+        method = 'get{}'.format(Utils.ucfirst(prop))
         if pdef['static']:
             line = 'public static function {}()'.format(method)
             content = ['\treturn {}::${};'.format(option['static_property'], prop)]
@@ -76,7 +77,7 @@ class PhpmePostGetterSetterCommand(sublime_plugin.TextCommand):
 
     def generate_setter(self, pdef, option):
         prop = pdef['name']
-        method = 'set{}'.format(prop.capitalize())
+        method = 'set{}'.format(Utils.ucfirst(prop))
 
         hint = self.helper.decide_hint(pdef['hint'], option['allow_native_hint'])
         default = ' = null' if hint[0] and option['hint_default_null'] else ''
