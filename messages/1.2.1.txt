@@ -1,0 +1,5 @@
+v1.2.1 2017-11-16
+-----------------
+
+- Update getter_setter message
+- Fix properties getter/setter order
