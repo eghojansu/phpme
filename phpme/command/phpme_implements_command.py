@@ -2,7 +2,7 @@ import sublime_plugin
 import re
 import os
 from ..helper import Helper
-from ..constant import Constant
+from ..utils import Utils
 from ..parser.class_parser import ClassParser
 
 
@@ -52,10 +52,12 @@ class PhpmeImplementsCommand(sublime_plugin.TextCommand):
     def pick_method(self, index):
         method = self.list_methods[index][0]
         namespace = self.list_methods[index][1]
-        if namespace not in self.methods:
-            self.methods[namespace] = {}
-        self.methods[namespace][method] = self.pending[namespace][method]
-        del self.list_methods[index]
+        found = Utils.find(self.pending[namespace], 'name', method)
+        if found:
+            if namespace not in self.methods:
+                self.methods[namespace] = []
+            self.methods[namespace].append(found)
+            del self.list_methods[index]
 
     def on_method_selected(self, index):
         if index > -1:
@@ -82,19 +84,21 @@ class PhpmeImplementsCommand(sublime_plugin.TextCommand):
 
     def find_methods(self, mdef):
         indexes = []
-        for alias, namespace in mdef['implements'].items():
-            use = self.helper.decide_use(alias, namespace, mdef['namespace'], mdef['uses'])
+        for i in mdef['implements']:
+            use = self.helper.decide_use(i['as'], i['ns'], mdef['namespace'], mdef['uses'])
             symbol = use.split('\\')[-1]
             for namespaces in self.helper.find_symbol(symbol, use):
                 if namespaces[0] == use:
                     methods = self.helper.parse_class_tree(None, namespaces[0], namespaces[1], mdef)
-                    for namespace, namespace_methods in methods.items():
-                        interface_methods = {}
+                    for namespace in sorted(list(methods.keys())):
+                        namespace_methods = methods[namespace]
+                        interface_methods = []
                         for method in namespace_methods:
-                            if method not in mdef['methods'] and method not in indexes:
-                                indexes.append(method)
-                                self.list_methods.append([method, namespace])
-                                interface_methods[method] = namespace_methods[method]
+                            found = Utils.find(mdef['methods'], 'name', method['name'])
+                            if not found and method['name'] not in indexes:
+                                indexes.append(method['name'])
+                                self.list_methods.append([method['name'], namespace])
+                                interface_methods.append(method)
                         if len(interface_methods) > 0:
                             self.pending[namespace] = interface_methods
                     break

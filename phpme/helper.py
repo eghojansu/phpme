@@ -5,6 +5,7 @@ import re
 import os
 from .binx.console import Console
 from .constant import Constant
+from .utils import Utils
 from .parser.class_parser import ClassParser
 
 
@@ -142,15 +143,13 @@ class Helper():
         uses = []
         arranged = []
         allow_native_hint = self.setting_get('native_hint', False)
-        for namespace, methods in namespace_methods.items():
-            for method in sorted(methods.keys()):
-                mdef = methods[method]
+        for namespace in sorted(list(namespace_methods.keys())):
+            for mdef in namespace_methods[namespace]:
                 if not allow_native_hint:
                     mdef['def'] = ClassParser.remove_native_hint(mdef['def'])
-                arranged.append('::'.join([namespace, method]))
+                arranged.append('::'.join([namespace, mdef['name']]))
                 arranged_methods.append(self.create_method_stub(mdef))
-                if mdef['uses']:
-                    uses += mdef['uses']
+                uses += mdef['uses']
 
         return {
             'methods': arranged_methods,
@@ -168,14 +167,14 @@ class Helper():
         else:
             mdef = ClassParser.create(None, file).parse()
             if mdef['methods']:
-                result[namespace] = {}
-                for method, mmdef in mdef['methods'].items():
+                result[namespace] = []
+                for mmdef in mdef['methods']:
                     mmdef['uses'] = self.decide_class_uses(mmdef['uses'], mdef, root)
-                    result[namespace][method] = mmdef
+                    result[namespace].append(mmdef)
                 if mdef['parent']:
                     use_parent = self.decide_use(
-                        mdef['parent']['alias'],
-                        mdef['parent']['namespace'],
+                        mdef['parent']['as'],
+                        mdef['parent']['ns'],
                         mdef['namespace'],
                         mdef['uses']
                     )
@@ -189,17 +188,20 @@ class Helper():
 
     def decide_class_uses(self, uses, parent, root):
         uses_added = []
-        for alias, namespace in uses.items():
+        for u in uses:
             use = None
-            if namespace == Constant.in_dir:
+            if u['ns'] == Constant.in_dir:
                 if parent['namespace'] != root['namespace']:
-                    use = parent['namespace'] + '\\' + alias
-            elif namespace == Constant.in_globals:
-                use = alias
+                    use = parent['namespace'] + '\\' + u['as']
+            elif u['ns'] == Constant.in_globals:
+                use = u['as']
             else:
-                use = namespace if namespace else alias
-            if use and use not in root['uses']:
-                uses_added.append(use)
+                use = u['ns'] if u['ns'] else u['as']
+
+            if use:
+                found = Utils.find(root['uses'], 'as', use)
+                if not found:
+                    uses_added.append(use)
 
         return uses_added
 
@@ -211,10 +213,12 @@ class Helper():
             use = alias
         elif namespace:
             use = namespace
-        elif alias in uses and uses[alias]:
-            use = uses[alias]
         else:
-            use = alias
+            found = Utils.find(uses, 'as', alias)
+            if found['ns']:
+                use = found['ns']
+            else:
+                use = alias
 
         return use
 
@@ -231,15 +235,17 @@ class Helper():
 
     def decide_uses(self, uses, parent_uses):
         uses_added = []
-        for alias, namespace in uses.items():
-            if namespace == Constant.in_dir:
+        for u in uses:
+            if u['ns'] == Constant.in_dir:
                 pass
-            elif namespace == Constant.in_globals:
-                if alias not in parent_uses:
-                    uses_added.append(alias)
+            elif u['ns'] == Constant.in_globals:
+                found = Utils.find(parent_uses, 'as', u['as'])
+                if not found:
+                    uses_added.append(u['as'])
             else:
-                use = namespace if namespace else alias
-                if use not in parent_uses:
+                use = u['ns'] if u['ns'] else u['as']
+                found = Utils.find(parent_uses, 'as', use)
+                if not found:
                     uses_added.append(use)
 
         return uses_added

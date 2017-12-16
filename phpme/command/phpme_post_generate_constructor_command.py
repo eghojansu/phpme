@@ -36,14 +36,13 @@ class PhpmePostGenerateConstructorCommand(sublime_plugin.TextCommand):
             ' * Class constructor',
             ' *',
         ]
-        for prop in sorted(list(properties.keys())):
-            pdef = properties[prop]
+        for pdef in properties:
             hint = self.helper.decide_hint(pdef['hint'], allow_native_hint)
             default = ' = null' if hint[0] and hint_default_null else ''
 
-            args.append((hint[0] + ' ' + '$' + prop + default).strip())
-            content.append('\t$this->{0} = ${0};'.format(prop))
-            docblocks.append(' * @param {} ${}'.format(hint[1], prop))
+            args.append((hint[0] + ' ' + '$' + pdef['name'] + default).strip())
+            content.append('\t$this->{0} = ${0};'.format(pdef['name']))
+            docblocks.append(' * @param {} ${}'.format(hint[1], pdef['name']))
             self.uses += pdef['uses']
         docblocks += [' */']
 

@@ -8,8 +8,8 @@ class PhpmeGenerateConstructorCommand(sublime_plugin.TextCommand):
     """Generate constructor"""
 
     def run(self, edit):
-        self.properties = {}
-        self.pending = {}
+        self.properties = []
+        self.pending = []
         self.list_properties = []
         self.collect_progress = 0
         self.helper = Helper(self.view)
@@ -47,9 +47,8 @@ class PhpmeGenerateConstructorCommand(sublime_plugin.TextCommand):
             self.helper.print_message('Cancel constructor generation')
 
     def pick_property(self, index):
-        prop = self.list_properties[index][0][1:]
-        self.properties[prop] = self.pending[prop]
-        del self.pending[prop]
+        self.properties.append(self.pending[index])
+        del self.pending[index]
         del self.list_properties[index]
 
     def on_property_selected(self, index):
@@ -79,12 +78,11 @@ class PhpmeGenerateConstructorCommand(sublime_plugin.TextCommand):
         self.run_schedule()
 
     def find_variables(self, mdef):
-        for prop in sorted(list(mdef['properties'].keys())):
-            pdef = mdef['properties'][prop]
+        for pdef in mdef['properties']:
             if not pdef['static']:
                 self.list_properties.append([
-                    '${}'.format(prop),
+                    '${}'.format(pdef['name']),
                     pdef['hint'] if pdef['hint'] else 'mixed'
                 ])
                 pdef['uses'] = self.helper.decide_uses(pdef['uses'], mdef['uses'])
-                self.pending[prop] = pdef
+                self.pending.append(pdef)

@@ -25,3 +25,8 @@ Add option to enable php7 coding session
 - Fix bug: use same class in same namespace (again)
 - Fix generate getter and setter in pair
 - Register command, Override Abstract Command
+
+## 2017-11-16
+
+- Update getter_setter message
+- Fix properties getter/setter order

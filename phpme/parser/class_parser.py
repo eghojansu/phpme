@@ -66,15 +66,14 @@ class ClassParser:
             'abstract': False,
             'final': False,
             'type': None,
-            # dict with key namespace and alias
-            'parent': None,
-            # @see uses
-            'implements': {},
-            'methods': {},
-            'properties': {},
             # uses alias can refer declaration of 'as'
             # if uses has no alias (eg: fqcn), namespace should be None
-            'uses': {}
+            # list of dict with key ns and as
+            'uses': [],
+            'implements': [],
+            'methods': [],
+            'properties': [],
+            'parent': None
         }
 
         while self.do_parse:
@@ -145,9 +144,9 @@ class ClassParser:
         if matches:
             for match in matches:
                 if match[1]:
-                    self.result['uses'][match[1]] = match[0]
+                    self.result['uses'].append({'ns': match[0], 'as': match[1]})
                 else:
-                    self.result['uses'][match[0]] = None
+                    self.result['uses'].append({'ns': None, 'as': match[0]})
             self.inc()
 
             return True
@@ -185,19 +184,14 @@ class ClassParser:
                         interface = interface.strip()
                         found = self.find_used_use(interface)
                         if found:
-                            self.result['implements'][found[0]] = found[1]
+                            self.result['implements'].append(found)
 
                 # parse parent
                 if rest[0].strip():
                     x = rest[0].strip().split('extends')
                     if len(x) > 1 and x[-1].strip():
                         parent = x[-1].strip()
-                        found = self.find_used_use(parent)
-                        if found:
-                            self.result['parent'] = {
-                                'alias': found[0],
-                                'namespace': found[1]
-                            }
+                        self.result['parent'] = self.find_used_use(parent)
 
             return True
 
@@ -218,29 +212,28 @@ class ClassParser:
             if matches:
                 docblocks = self.get_docblocks(start_line)
                 hint = None
-                uses = {}
+                uses = []
                 if docblocks:
                     match_hint = re.search(r'@var\s+([\w\\]+)', docblocks)
                     if match_hint:
                         hint = match_hint.group(1)
                         found = self.find_used_use(hint)
                         if found:
-                            uses[found[0]] = found[1]
+                            uses.append(found)
 
                 for i in range(0, len(matches)):
-                    name = matches[i][3]
                     if i > 0:
                         hint = None
-                        uses = {}
+                        uses = []
 
-                    self.result['properties'][name] = {
-                        'name': name,
+                    self.result['properties'].append({
+                        'name': matches[i][3],
                         'hint': hint,
                         'uses': uses,
                         'docblocks': docblocks,
                         'visibility': matches[i][1],
                         'static': matches[i][2].strip() == 'static'
-                    }
+                    })
 
                 return True
 
@@ -259,18 +252,15 @@ class ClassParser:
             p = r'(abstract\s+)?((public|protected|private)?(\s+static)?\s*function\s*([\w]+)\s*\((.*?)\)(?:\s*\:\s*\w+)?)(?:\s*;|.*?{)'
             match = re.search(p, line, re.S)
             if match:
-                docblocks = self.get_docblocks(start_line)
-
-                name = match.group(5)
-                self.result['methods'][name] = {
-                    'name': name,
-                    'docblocks': docblocks,
+                self.result['methods'].append({
+                    'name': match.group(5),
+                    'docblocks': self.get_docblocks(start_line),
                     'def': match.group(2),
                     'uses': self.find_uses_args(match.group(6)),
                     'visibility': match.group(3),
                     'static': (match.group(4) and (match.group(4).strip() == 'static')),
                     'abstract': (match.group(1) and (match.group(1).strip() == 'abstract'))
-                }
+                })
 
                 # move until method close
                 brace_open = line.count('{') - 1
@@ -286,30 +276,27 @@ class ClassParser:
                 return True
 
     def find_uses_args(self, line):
-        uses = {}
+        uses = []
         type_hints = re.findall(r'([\w\\]+)\s+\$', line)
         if type_hints:
             for hint in type_hints:
                 found = self.find_used_use(hint)
                 if found:
-                    uses[found[0]] = found[1]
+                    uses.append(found)
 
         return uses
 
     def find_used_use(self, namespace):
         namespace = namespace.strip('\\')
         if not ClassParser.is_native_hint(namespace):
-            if namespace in self.result['uses']:
-                return (namespace, self.result['uses'][namespace])
-            else:
-                for use_alias, use_namespace in self.result['uses'].items():
-                    if use_alias.endswith(namespace) and not use_namespace:
-                        return (use_alias, None)
+            for r in self.result['uses']:
+                if r['as'] == namespace or (r['as'].endswith(namespace) and not r['ns']):
+                    return r
 
-                if self.same_dir_namespace(namespace):
-                    return (namespace, Constant.in_dir)
-                else:
-                    return (namespace, Constant.in_globals)
+            if self.same_dir_namespace(namespace):
+                return {'as': namespace, 'ns': Constant.in_dir}
+            else:
+                return {'as': namespace, 'ns': Constant.in_globals}
 
     def get_docblocks(self, line):
         docblocks = None

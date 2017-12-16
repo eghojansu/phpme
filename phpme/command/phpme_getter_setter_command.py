@@ -1,6 +1,7 @@
 import sublime
 import sublime_plugin
 import os
+import operator
 from ..helper import Helper
 from ..constant import Constant
 from ..parser.class_parser import ClassParser
@@ -10,8 +11,8 @@ class PhpmeGetterSetterCommand(sublime_plugin.TextCommand):
     """Generate getter and setter"""
 
     def run(self, edit, mode):
-        self.properties = {}
-        self.pending = {}
+        self.properties = []
+        self.pending = []
         self.list_properties = []
         self.collect_progress = 0
         self.mode = mode
@@ -49,12 +50,11 @@ class PhpmeGetterSetterCommand(sublime_plugin.TextCommand):
                 'mode': self.mode
             })
         else:
-            self.helper.print_message('No property selected')
+            self.helper.print_message('No method to generate')
 
     def pick_property(self, index):
-        prop = self.list_properties[index][0][1:]
-        self.properties[prop] = self.pending[prop]
-        del self.pending[prop]
+        self.properties.append(self.pending[index])
+        del self.pending[index]
         del self.list_properties[index]
 
     def on_method_selected(self, index):
@@ -82,14 +82,13 @@ class PhpmeGetterSetterCommand(sublime_plugin.TextCommand):
         self.run_schedule()
 
     def find_variables(self, mdef, mode):
-        for prop in sorted(list(mdef['properties'].keys())):
-            getter_method = 'get{}'.format(prop.capitalize())
-            setter_method = 'set{}'.format(prop.capitalize())
-            var = '$' + prop
-            pdef = mdef['properties'][prop]
+        for pdef in mdef['properties']:
+            getter_method = 'get{}'.format(pdef['name'].capitalize())
+            setter_method = 'set{}'.format(pdef['name'].capitalize())
+            var = '$' + pdef['name']
 
             if (((mode & Constant.gen_getter) and (getter_method not in mdef['methods']))
                 or ((mode & Constant.gen_setter) and (setter_method not in mdef['methods']))):
                 self.list_properties.append([var, pdef['hint'] if pdef['hint'] else 'mixed'])
                 pdef['uses'] = self.helper.decide_uses(pdef['uses'], mdef['uses'])
-                self.pending[prop] = pdef
+                self.pending.append(pdef)

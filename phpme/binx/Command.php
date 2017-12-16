@@ -55,9 +55,10 @@ class Command
             $methods = [];
             foreach ($ref->getMethods() as $key => $method) {
                 $line = $this->methodLine($method);
-                $methods[$method->name] = [
+                $methods[] = [
+                    'name' => $method->name,
                     'def' => $line[0],
-                    'uses' => $line[1] ?: false,
+                    'uses' => $line[1] ?: [],
                     'docblocks' => $method->getDocComment()
                 ];
             }

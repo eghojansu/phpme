@@ -41,8 +41,7 @@ class PhpmePostGetterSetterCommand(sublime_plugin.TextCommand):
             'setter_chainable': self.helper.setting_get('setter_chainable', True)
         }
 
-        for prop in sorted(list(properties.keys())):
-            pdef = properties[prop]
+        for pdef in properties:
             if mode & Constant.gen_getter:
                 self.methods.append(self.generate_getter(pdef, option))
             if mode & Constant.gen_setter:
