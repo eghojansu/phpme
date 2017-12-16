@@ -18,3 +18,10 @@ Add option to enable php7 coding session
 
 - Fix use same class in same namespace
 - Fix generate getter setter command
+
+## 2017-11-16
+
+- Command API not change but its logic has many changes
+- Fix bug: use same class in same namespace (again)
+- Fix generate getter and setter in pair
+- Register command, Override Abstract Command

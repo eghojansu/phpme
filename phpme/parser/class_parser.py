@@ -1,5 +1,7 @@
-import re, os
-from ..utils import Utils
+import os
+import re
+from ..constant import Constant
+
 
 class ClassParser:
     """
@@ -32,22 +34,19 @@ class ClassParser:
             return self.content.splitlines()
 
         if self.file:
-            return self.file_content(self.file).splitlines()
+            with open(self.file, "r") as f:
+                content = f.read()
+
+            return content.splitlines()
 
         return []
 
-    def file_content(self, file):
-        # Get the contents of the file at the given path
-        with open(file, "r") as f:
-            content = f.read()
-
-        return content
-
     def same_dir_namespace(self, alias):
         if self.file and self.result['namespace'] and alias != os.path.basename(self.file).split('.')[0]:
-            pfile = os.path.dirname(self.file) + '/' + Utils.fixslash(alias) + '.php'
-            if os.path.isfile(pfile):
-                return self.result['namespace'] + '\\' + alias;
+            sep = '\\'
+            pfile = os.path.dirname(self.file) + os.sep + alias.lstrip(sep).replace(sep, os.sep) + '.php'
+
+            return os.path.isfile(pfile)
 
     def parse(self):
         lines = self.get_lines()
@@ -55,6 +54,7 @@ class ClassParser:
         self.llen = len(lines)
         self.maxi = self.llen - 1
         self.do_parse = self.llen > 0
+        self.comments = {}
         self.incontext = {
             'class': False,
             'function': False
@@ -66,8 +66,6 @@ class ClassParser:
             'abstract': False,
             'final': False,
             'type': None,
-            'is_interface': False,
-            'is_trait': False,
             # dict with key namespace and alias
             'parent': None,
             # @see uses
@@ -116,11 +114,17 @@ class ClassParser:
         elif line.startswith('/*'):
             # move until ends of block comment
             check = lambda: self.ctr <= self.maxi and not line.endswith('*/')
+            comment = line
             while check():
                 self.inc()
+                comment += '\n' + lines[self.ctr]
                 line = lines[self.ctr].strip()
             else:
                 self.inc()
+
+            next_line = lines[self.ctr].strip()
+            if next_line:
+                self.comments[next_line] = comment
 
             return True
 
@@ -170,12 +174,7 @@ class ClassParser:
             self.result['final'] = match.group(1) == 'final'
             self.result['type'] = match.group(2)
             self.result['name'] = match.group(3)
-            self.result['fqcn'] = self.result['name']
-            self.result['is_interface'] = self.result['type'] == 'interface'
-            self.result['is_trait'] = self.result['type'] == 'trait'
-
-            if self.result['namespace']:
-                self.result['fqcn'] = '\\'.join([self.result['namespace'], self.result['name']])
+            self.result['fqcn'] = self.result['namespace'] + '\\' + self.result['name'] if self.result['namespace'] else None
 
             # has extension or implements interface
             if match.group(4):
@@ -183,15 +182,17 @@ class ClassParser:
                 # parse interfaces
                 if len(rest) > 1 and rest[1].strip():
                     for interface in rest[1].strip().split(','):
-                        found = self.find_used_use(interface.strip())
+                        interface = interface.strip()
+                        found = self.find_used_use(interface)
                         if found:
                             self.result['implements'][found[0]] = found[1]
+
                 # parse parent
                 if rest[0].strip():
                     x = rest[0].strip().split('extends')
                     if len(x) > 1 and x[-1].strip():
-                        parent = x[-1]
-                        found = self.find_used_use(parent.strip())
+                        parent = x[-1].strip()
+                        found = self.find_used_use(parent)
                         if found:
                             self.result['parent'] = {
                                 'alias': found[0],
@@ -203,7 +204,7 @@ class ClassParser:
     def match_property(self, line, lines):
         """Recognize variable in class"""
         if self.incontext['class'] and not self.incontext['function']:
-            start_line = self.ctr
+            start_line = line
             if re.search(r'((public|private|protected)?(\s*static)?\s*\$\w+)', line):
                 closed = lambda: line.strip().endswith(';')
                 while not closed():
@@ -215,7 +216,7 @@ class ClassParser:
             p = r'((public|private|protected)?(\s*static)?\s*\$(\w+)(?:\s+=\s+[^;]+)?;)'
             matches = re.findall(p, line)
             if matches:
-                docblocks = self.find_docblocks(start_line - 1, lines)
+                docblocks = self.get_docblocks(start_line)
                 hint = None
                 uses = {}
                 if docblocks:
@@ -233,12 +234,11 @@ class ClassParser:
                         uses = {}
 
                     self.result['properties'][name] = {
+                        'name': name,
                         'hint': hint,
                         'uses': uses,
+                        'docblocks': docblocks,
                         'visibility': matches[i][1],
-                        'public': 'public' == matches[i][1],
-                        'private': 'private' == matches[i][1],
-                        'protected': 'protected' == matches[i][1],
                         'static': matches[i][2].strip() == 'static'
                     }
 
@@ -247,7 +247,7 @@ class ClassParser:
     def match_method(self, line, lines):
         """Recognize method declaration in class"""
         if self.incontext['class']:
-            start_line = self.ctr
+            start_line = line
             if re.search(r'(abstract\s+)?((public|protected|private)?(\s+static)?\s*function\s*([\w]+))', line):
                 closed = lambda: '{' in line or line.strip().endswith(';')
                 while not closed():
@@ -259,20 +259,17 @@ class ClassParser:
             p = r'(abstract\s+)?((public|protected|private)?(\s+static)?\s*function\s*([\w]+)\s*\((.*?)\)(?:\s*\:\s*\w+)?)(?:\s*;|.*?{)'
             match = re.search(p, line, re.S)
             if match:
-                docblocks = self.find_docblocks(start_line - 1, lines)
+                docblocks = self.get_docblocks(start_line)
 
                 name = match.group(5)
-                visibility = match.group(3)
                 self.result['methods'][name] = {
+                    'name': name,
                     'docblocks': docblocks,
                     'def': match.group(2),
                     'uses': self.find_uses_args(match.group(6)),
-                    'visibility': visibility,
-                    'public': 'public' == visibility,
-                    'private': 'private' == visibility,
-                    'protected': 'protected' == visibility,
+                    'visibility': match.group(3),
                     'static': (match.group(4) and (match.group(4).strip() == 'static')),
-                    'abstract': (match.group(0) and (match.group(0).strip() == 'abstract')),
+                    'abstract': (match.group(1) and (match.group(1).strip() == 'abstract'))
                 }
 
                 # move until method close
@@ -309,23 +306,15 @@ class ClassParser:
                     if use_alias.endswith(namespace) and not use_namespace:
                         return (use_alias, None)
 
-                return (namespace, self.same_dir_namespace(namespace))
+                if self.same_dir_namespace(namespace):
+                    return (namespace, Constant.in_dir)
+                else:
+                    return (namespace, Constant.in_globals)
 
-    def find_docblocks(self, line_end, lines):
-        if line_end < 1:
-            return
+    def get_docblocks(self, line):
+        docblocks = None
+        if line in self.comments:
+            docblocks = self.comments[line]
+            del self.comments[line]
 
-        line_end_content = lines[line_end].strip()
-        if len(line_end_content) == 0 or not line_end_content.endswith('*/'):
-            return
-
-        docblocks = lines[line_end]
-        closed = line_end_content.startswith('/*')
-        ctr = line_end - 1
-        while not closed:
-            tmp_line = lines[ctr]
-            docblocks = tmp_line + '\n' + docblocks
-            ctr -= 1
-            closed = (ctr < 1) or tmp_line.strip().startswith('/*')
-
-        return docblocks.lstrip()
+        return docblocks

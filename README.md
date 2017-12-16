@@ -105,10 +105,9 @@ If you're storing settings in a project file, put them in a phpme node like this
 }
 ```
 
-### php7
+### native_hint
 
-PHP version you are working on.
-This setting effects on method construction.
+Should we include native hint too? eg: string, array bool etc.
 Set to true will add native hint declared on your variable docblock as method parameter hint.
 
 Example:
@@ -124,6 +123,10 @@ class AClass
     public $mySecondProperty;
 }
 ```
+
+### hint_default_null
+
+Should we add ```$param = null``` on non-native parameter when generate method?
 
 Type: bool
 

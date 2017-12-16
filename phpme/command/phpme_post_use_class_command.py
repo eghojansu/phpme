@@ -1,9 +1,11 @@
 import sublime_plugin
-from ..phpme_command import PhpmeCommand
+from ..helper import Helper
 
 
-class PhpmePostUseClassCommand(sublime_plugin.TextCommand, PhpmeCommand):
+class PhpmePostUseClassCommand(sublime_plugin.TextCommand):
     def run(self, edit, namespaces):
+        self.helper = Helper(self.view)
+
         exists = []
         used = []
         for namespace in list(set(namespaces)):
@@ -14,12 +16,12 @@ class PhpmePostUseClassCommand(sublime_plugin.TextCommand, PhpmeCommand):
 
         if len(used) > 0:
             if self.insert_first_use(edit, used) or self.insert_use_among_others(edit, used):
-                self.print_message('Successfully use: "{}"'.format('", "'.join(used)))
+                self.helper.print_message('Successfully use: "{}"'.format('", "'.join(used)))
             else:
-                self.print_message('Something wrong but we have no clue, sorry')
+                self.helper.print_message('Something wrong but we have no clue, sorry')
 
         if len(exists) > 0:
-            self.print_message('Namespaces is already used: "{}"'.format('", "'.join(exists)))
+            self.helper.print_message('Namespaces is already used: "{}"'.format('", "'.join(exists)))
 
     def is_already_used(self, namespace):
         return not self.view.find(r'use\s+{}\s*([^;]+)?;'.format(namespace.replace('\\', '\\\\')), 0).empty()
@@ -50,7 +52,7 @@ class PhpmePostUseClassCommand(sublime_plugin.TextCommand, PhpmeCommand):
         self.view.find_all(r'^(use\s+[^;]+;)', 0, '$1', uses)
         uses += ['use {};'.format(namespace) for namespace in namespaces]
         uses.sort()
-        if self.get_setting('use_sort_length'):
+        if self.helper.setting_get('use_sort_length'):
             uses.sort(key = len)
 
         return '\n'.join(uses)

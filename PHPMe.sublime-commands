@@ -16,6 +16,11 @@
         "command": "phpme_implements"
     },
     {
+        "caption": "PHPMe: Override Abstract Method",
+        "command": "phpme_override_method",
+        "args": {"abstract_only": true}
+    },
+    {
         "caption": "PHPMe: Override Method",
         "command": "phpme_override_method"
     },

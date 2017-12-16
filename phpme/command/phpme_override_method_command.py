@@ -1,114 +1,105 @@
-import sublime, sublime_plugin
+import sublime_plugin
 import os
-from ..phpme_command import PhpmeCommand
+from ..helper import Helper
 from ..parser.class_parser import ClassParser
-from ..binx.console import Console
 
 
-class PhpmeOverrideMethodCommand(sublime_plugin.TextCommand, PhpmeCommand):
+class PhpmeOverrideMethodCommand(sublime_plugin.TextCommand):
     """Override method"""
 
-    def run(self, edit):
+    def run(self, edit, abstract_only = False):
         self.methods = {}
-        self.selected_methods = {}
+        self.pending = {}
         self.list_methods = []
         self.collect_progress = 0
+        self.abstract_only = abstract_only
+        self.helper = Helper(self.view)
 
-        if self.in_php_scope() and self.build_definition():
-            self.run_schedule()
-
-    def has_method(self):
-        return len(self.selected_methods) > 0
+        if self.helper.not_scope():
+            self.helper.e_scope()
+        else:
+            mdef = ClassParser.create(self.helper.content(), self.helper.filename).parse()
+            if self.helper.not_class(mdef, ['class']):
+                self.helper.e_class()
+            elif not mdef['parent']:
+                self.helper.print_message('Class have no parent')
+            else:
+                self.find_methods(mdef)
+                self.run_schedule()
 
     def run_schedule(self):
         if self.collect_progress == 0:
             if len(self.list_methods) > 0:
-                options = [
-                    ['Override All', 'override all methods'],
-                    ['Override Some', 'pick multiple method one by one']
-                ]
+                options = []
+                if self.abstract_only:
+                    options.append(['Override All', 'override all methods'])
+                options.append(['Override Some', 'pick multiple method one by one'])
                 self.view.window().show_quick_panel(options+self.list_methods, self.on_method_selected)
             else:
-                self.selected_methods = self.methods
+                self.methods = self.pending
                 self.collect_progress = 2
                 self.run_schedule()
         elif self.collect_progress == 1:
             # ask again
             options = [['Done', 'done selecting method']]
             self.view.window().show_quick_panel(options+self.list_methods, self.on_method_selected)
-        elif self.has_method():
-            self.view.run_command('phpme_post_override_method', {'methods': self.selected_methods})
+        elif len(self.methods) > 0:
+            self.view.run_command('phpme_post_override_method', {'methods': self.methods})
         else:
-            self.print_message('No method to override')
-
-    def no_method_to_select(self):
-        return len(self.list_methods) == 0
+            self.helper.print_message('No method to override')
 
     def pick_method(self, index):
         method = self.list_methods[index][0]
         namespace = self.list_methods[index][1]
-        if not namespace in self.selected_methods:
-            self.selected_methods[namespace] = {}
-        self.selected_methods[namespace][method] = self.methods[namespace][method]
+        if namespace not in self.methods:
+            self.methods[namespace] = {}
+        self.methods[namespace][method] = self.pending[namespace][method]
         del self.list_methods[index]
 
     def on_method_selected(self, index):
         if index > -1:
             if self.collect_progress == 0:
-                if index == 0:
-                    self.selected_methods = self.methods
-                    self.collect_progress = 2
-                elif index == 1:
-                    self.collect_progress = 1
+                if self.abstract_only:
+                    if index == 0:
+                        self.methods = self.pending
+                        self.collect_progress = 2
+                    elif index == 1:
+                        self.collect_progress = 1
+                    else:
+                        self.pick_method(index - 2)
+                        self.collect_progress = 2
                 else:
-                    self.pick_method(index - 2)
-                    self.collect_progress = 2
+                    if index == 0:
+                        self.collect_progress = 1
+                    else:
+                        self.pick_method(index - 1)
+                        self.collect_progress = 2
             elif self.collect_progress == 1:
                 if index == 0:
                     self.collect_progress = 2
                 else:
                     self.pick_method(index - 1)
+                    if len(self.list_methods) == 0:
+                        self.collect_progress = 2
         else:
-            self.list_methods = []
-
-        if self.no_method_to_select():
             self.collect_progress = 2
+
         self.run_schedule()
 
-    def build_definition(self):
-        region = sublime.Region(0, self.view.size())
-        content = self.view.substr(region)
-        if len(content) == 0:
-            self.print_message('File has no content')
-            return
-
-        # current view content
-        file = os.path.abspath(self.view.file_name())
-        mdef = ClassParser.create(content, file).parse()
-        if not self.in_class_scope(mdef):
-            return
-
-        if mdef['is_interface'] or mdef['is_trait']:
-            self.print_message('Cannot override method in {} context'.format(mdef['type']))
-            return
-
-        if not mdef['parent']:
-            self.print_message('Class have no parent')
-            return
-
-        parent = mdef['parent']['alias'].split('\\')[-1]
-        parent_namespace = mdef['parent']['namespace'] if mdef['parent']['namespace'] else mdef['parent']['alias']
-        for namespace in self.find_symbol(parent):
-            if namespace[0] == parent_namespace:
-                methods = self.parse_class_tree(None, namespace[0], namespace[1])
+    def find_methods(self, mdef):
+        indexes = []
+        use = self.helper.decide_use(mdef['parent']['alias'], mdef['parent']['namespace'], mdef['namespace'], mdef['uses'])
+        symbol = use.split('\\')[-1]
+        for namespaces in self.helper.find_symbol(symbol, use):
+            if namespaces[0] == use:
+                methods = self.helper.parse_class_tree(None, namespaces[0], namespaces[1], mdef)
                 for namespace, namespace_methods in methods.items():
-                    self.methods[namespace] = {}
+                    parent_methods = {}
                     for method in namespace_methods:
-                        if not method in mdef['methods']:
+                        if method not in mdef['methods'] and method not in indexes and (not self.abstract_only or namespace_methods[method]['abstract']):
+                            indexes.append(method)
                             self.list_methods.append([method, namespace])
-                            self.methods[namespace][method] = namespace_methods[method]
-                    if len(self.methods[namespace]) == 0:
-                        del self.methods[namespace]
+                            parent_methods[method] = namespace_methods[method]
+                    if len(parent_methods) > 0:
+                        self.pending[namespace] = parent_methods
                 break
-
-        return True

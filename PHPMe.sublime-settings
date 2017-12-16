@@ -1,8 +1,4 @@
 {
-    // PHP version you are working on
-    // @type: bool
-    "php7": false,
-
     // namespace and relative path to current folder pairs, trailing slash/backslash are optional.
     // relative path can be array
     //
@@ -38,6 +34,14 @@
     // Generate docblocks for getter/setter
     // @type: boolean
     "generate_docblock": false,
+
+    // Include native hint?
+    // @type: bool
+    "native_hint": false,
+
+    // Non-native hint should defaults to null?
+    // @type: bool
+    "hint_default_null": false,
 
     // Make setter chainable (return $this)
     // @type: boolean

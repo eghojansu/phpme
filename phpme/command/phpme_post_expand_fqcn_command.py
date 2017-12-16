@@ -1,9 +1,11 @@
 import sublime_plugin
-from ..phpme_command import PhpmeCommand
+from ..helper import Helper
 
 
-class PhpmePostExpandFqcnCommand(sublime_plugin.TextCommand, PhpmeCommand):
+class PhpmePostExpandFqcnCommand(sublime_plugin.TextCommand):
     def run(self, edit, symbols):
+        helper = Helper(self.view)
+
         if len(symbols) > 0:
             expanded = []
             failed = []
@@ -11,13 +13,12 @@ class PhpmePostExpandFqcnCommand(sublime_plugin.TextCommand, PhpmeCommand):
                 word_region = self.view.word(region)
                 symbol = self.view.substr(word_region)
                 if symbol in symbols:
-                    namespace = symbols[symbol][0]
-                    self.view.replace(edit, word_region, namespace)
+                    self.view.replace(edit, word_region, symbols[symbol])
                     expanded.append(symbol)
                 else:
                     failed.append(symbol)
 
             if len(expanded) > 0:
-                self.print_message('Successfully expands: "{}"'.format('", "'.join(expanded)))
+                helper.print_message('Successfully expands: "{}"'.format('", "'.join(expanded)))
             if len(failed) > 0:
-                self.print_message('Failed expands: "{}"'.format('", "'.join(failed)))
+                helper.print_message('Failed expands: "{}"'.format('", "'.join(failed)))
