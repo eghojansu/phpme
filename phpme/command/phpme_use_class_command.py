@@ -53,6 +53,7 @@ class PhpmeUseClassCommand(sublime_plugin.TextCommand):
                 elif nlen == 1:
                     self.uses.append(namespaces[0][0])
                 else:
+                    namespaces.sort(key = lambda i: len(i[0]))
                     self.pending[keyword] = namespaces
             else:
                 self.invalid.append(keyword)

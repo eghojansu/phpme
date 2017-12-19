@@ -56,6 +56,7 @@ class PhpmeExpandFqcnCommand(sublime_plugin.TextCommand):
                 elif nlen == 1:
                     self.symbols[keyword] = self.prefix + namespaces[0][0]
                 else:
+                    namespaces.sort(key = lambda i: len(i[0]))
                     self.pending[keyword] = namespaces
             else:
                 self.invalid.append(keyword)

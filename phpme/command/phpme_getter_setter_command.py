@@ -1,7 +1,6 @@
 import sublime
 import sublime_plugin
 import os
-import operator
 from ..helper import Helper
 from ..utils import Utils
 from ..constant import Constant
