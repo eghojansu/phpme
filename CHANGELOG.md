@@ -34,3 +34,8 @@ Add option to enable php7 coding session
 ## 2017-11-16
 
 - Fix generate getter/setter method name
+
+## 2017-11-19
+
+- Fix insert namespace relative to project root
+- Fix expand fqcn and use class selection list sorting
