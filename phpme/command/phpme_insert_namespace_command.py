@@ -45,9 +45,21 @@ class PhpmeInsertNamespaceCommand(sublime_plugin.TextCommand):
 
         lookups = self.helper.setting_get('namespaces', {})
         lookups.update(Composer.create(project_dir).autoload())
-        for namespace, path in lookups.items():
+        for namespace in sorted(list(lookups.keys()), key = len):
+            path = lookups[namespace]
             for dp in dp_flex:
-                if (path == dp) or (isinstance(path, list) and dp in path):
-                    return namespace.strip('\\')
+                if isinstance(path, list):
+                    for p in sorted(path, key = len):
+                        if p == dp:
+                            return namespace.rstrip('\\')
+                        elif dp.startswith(p):
+                            return self.relative_namespace(dp, p, namespace)
+                elif dp == path:
+                    return namespace.rstrip('\\')
+                elif dp.startswith(path):
+                    return self.relative_namespace(dp, path, namespace)
 
-        return dir_prefix.replace('/', '\\')
+        return dir_prefix.replace(os.sep, '\\').rstrip('\\')
+
+    def relative_namespace(self, path, base, namespace):
+        return namespace.rstrip('\\') + '\\' + path.replace(base, '').replace(os.sep, '\\').strip('\\')
