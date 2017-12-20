@@ -39,3 +39,7 @@ Add option to enable php7 coding session
 
 - Fix insert namespace relative to project root
 - Fix expand fqcn and use class selection list sorting
+
+## 2017-11-20
+
+- Fix parser to accept function pass by reference declaration

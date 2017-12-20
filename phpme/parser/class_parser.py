@@ -241,7 +241,7 @@ class ClassParser:
         """Recognize method declaration in class"""
         if self.incontext['class']:
             start_line = line
-            if re.search(r'(abstract\s+)?((public|protected|private)?(\s+static)?\s*function\s*([\w]+))', line):
+            if re.search(r'(abstract\s+)?((public|protected|private)?(\s+static)?\s*function\s*([&|\w]+))', line):
                 closed = lambda: '{' in line or line.strip().endswith(';')
                 while not closed():
                     self.inc()
@@ -249,7 +249,7 @@ class ClassParser:
                 else:
                     self.inc()
 
-            p = r'(abstract\s+)?((public|protected|private)?(\s+static)?\s*function\s*([\w]+)\s*\((.*?)\)(?:\s*\:\s*\w+)?)(?:\s*;|.*?{)'
+            p = r'(abstract\s+)?((public|protected|private)?(\s+static)?\s*function\s*([&|\w]+)\s*\((.*?)\)(?:\s*\:\s*\w+)?)(?:\s*;|.*?{)'
             match = re.search(p, line, re.S)
             if match:
                 self.result['methods'].append({
