@@ -228,7 +228,7 @@ class Helper():
         if hint:
             def_hint = hint
             doc_hint = hint
-            if ClassParser.is_native_hint(hint) and not allow_native_hint:
+            if not ClassParser.is_native_hintable(hint) and not allow_native_hint:
                 def_hint = ''
 
         return (def_hint, doc_hint)

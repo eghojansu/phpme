@@ -43,3 +43,7 @@ Add option to enable php7 coding session
 ## 2017-11-20
 
 - Fix parser to accept function pass by reference declaration
+
+## 2017-11-25
+
+- Allow native hintable in method generation

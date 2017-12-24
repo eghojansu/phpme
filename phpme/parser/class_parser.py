@@ -12,6 +12,11 @@ class ClassParser:
         self.content = content
         self.file = file
 
+    def is_native_hintable(hint):
+        excludes = r'(array)'
+
+        return re.search(excludes, hint) != None
+
     def is_native_hint(hint):
         excludes = r'(null|array|bool|boolean|string|int|integer|long|object|resource|float|double|decimal|real|numeric)'
 
@@ -21,7 +26,7 @@ class ClassParser:
         type_hints = re.findall(r'(([\w\\]+)\s+)\$', line)
         if type_hints:
             for hint in type_hints:
-                if ClassParser.is_native_hint(hint[1]):
+                if not ClassParser.is_native_hintable(hint[1]):
                     line = line.replace(hint[0], '')
 
         return line
