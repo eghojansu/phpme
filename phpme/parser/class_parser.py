@@ -26,7 +26,7 @@ class ClassParser:
         type_hints = re.findall(r'(([\w\\]+)\s+)\$', line)
         if type_hints:
             for hint in type_hints:
-                if not ClassParser.is_native_hintable(hint[1]):
+                if ClassParser.is_native_hint(hint[1]) and not ClassParser.is_native_hintable(hint[1]):
                     line = line.replace(hint[0], '')
 
         return line
@@ -268,17 +268,28 @@ class ClassParser:
                 })
 
                 # move until method close
-                brace_open = line.count('{') - 1
                 closed = (self.ctr == self.maxi) or line.strip().endswith(';')
                 self.incontext['function'] = not closed
+
+                brace_start = self.count_brace(line)
+                brace_open  = brace_start - 1 if brace_start else 0
+
                 while not closed:
                     next_line = lines[self.ctr]
-                    brace_open += (next_line.count('{') - next_line.count('}'))
-                    closed = (self.ctr == self.maxi) or ('}' in next_line and brace_open < 1)
-                    self.inc()
+
+                    brace_open += self.count_brace(next_line)
+                    closed = (self.ctr == self.maxi) or ('}' in next_line and brace_open + brace_start < 1)
+
                     self.incontext['function'] = not closed
+                    self.inc()
 
                 return True
+
+    def count_brace(self, line):
+        open_brace = len(re.findall(r'(\{)(?=(?:[^\'"]|["\'][^\'"]*["\'])*$)', line))
+        close_brace = len(re.findall(r'(\})(?=(?:[^\'"]|["\'][^\'"]*["\'])*$)', line))
+
+        return open_brace - close_brace
 
     def find_uses_args(self, line):
         uses = []

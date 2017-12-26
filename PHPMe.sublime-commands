@@ -50,5 +50,13 @@
     {
         "caption": "PHPMe: Insert Project Meta",
         "command": "phpme_project_meta"
+    },
+    {
+        "caption": "PHPMe: Copy Method (Definition Only)",
+        "command": "phpme_copy_method"
+    },
+    {
+        "caption": "PHPMe: Generate Test Method",
+        "command": "phpme_generate_test_method"
     }
 ]

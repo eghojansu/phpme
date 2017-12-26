@@ -21,3 +21,10 @@ from .phpme.command.phpme_post_generate_constructor_command import PhpmePostGene
 from .phpme.command.phpme_goto_definition_scope_command import PhpmeGotoDefinitionScopeCommand
 
 from .phpme.command.phpme_project_meta_command import PhpmeProjectMetaCommand
+
+from .phpme.command.phpme_copy_method_command import PhpmeCopyMethodCommand
+from .phpme.command.phpme_post_copy_method_command import PhpmePostCopyMethodCommand
+
+from .phpme.command.phpme_generate_test_method_command import PhpmeGenerateTestMethodCommand
+
+from .phpme.command.phpme_post_generate_method_command import PhpmePostGenerateMethodCommand

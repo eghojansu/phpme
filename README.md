@@ -89,6 +89,22 @@ Generate project meta for current file. Template can be configured, see setting 
 
 To use this feature you do not need to put cursor on valid symbol, just trigger this command.
 
+### copy_method
+
+Copy selected class method definition.
+
+To use this feature you need to put cursor on valid class symbol then trigger this command.
+
+(Support multiple selection, classes from globals is not supported).
+
+### generate_test_method
+
+Generate test method for PHPUnit TestCase. It use test case name to generate proposed test method. Default guess is to match ```^(\w+)Test$```. Note that pattern should contain one parenthesis.
+
+To use this feature you do not need to put cursor on valid symbol, just trigger this command.
+
+(Classes from globals is not supported).
+
 ## Settings
 
 Settings can be stored either in your system wide "PHPMe.sublime-settings" file or in the project
@@ -236,6 +252,24 @@ Type: string[], defaults to:
     ]
 }
 ```
+
+### test_case_pattern
+
+How to get test case class.
+
+Type: string, defaults to: ```^(\w+)Test$```
+
+### test_public_only
+
+Include public method only.
+
+Type: boolean, defaults to: true
+
+### test_generate_content
+
+Generate sample method content.
+
+Type: boolean, defaults to: true
 
 
 ## Keybinding

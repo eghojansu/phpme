@@ -64,5 +64,17 @@
         "file that was distributed with this source code.",
         "",
         "Created at {time(%b %d, %Y %H:%M)}"
-    ]
+    ],
+
+    // How to get test case class
+    // @type: string Regex pattern
+    "test_case_pattern": "^(\\w+)Test$",
+
+    // Include public method only
+    // @type: boolean
+    "test_public_only": true,
+
+    // Generate sample method content
+    // @type: boolean
+    "test_generate_content": true
 }

@@ -47,3 +47,11 @@ Add option to enable php7 coding session
 ## 2017-11-25
 
 - Allow native hintable in method generation
+
+## 2017-11-26
+
+- Fix hint in method generation
+- Add phpme_copy_method_command
+- Add phpme_generate_test_command
+- Add setting: test_case_pattern, test_public_only, test_generate_content
+- Fix class method and properties parsing

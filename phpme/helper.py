@@ -57,7 +57,7 @@ class Helper():
     def is_global(self, found):
         return found and found[1] == Constant.in_globals
 
-    def find_symbol(self, symbol, namespace = None):
+    def find_symbol(self, symbol, namespace = None, in_globals = True):
         pattern = re.compile(b'^namespace\s+([^;]+);', re.M)
         namespaces = []
         index = []
@@ -73,7 +73,7 @@ class Helper():
                             namespaces.append([ns_in_file, file[0]])
                             index.append(ns_in_file)
 
-        if self.setting_get('allow_use_from_global_namespace', False):
+        if in_globals and self.setting_get('allow_use_from_global_namespace', False):
             for ns in Console.get_classes(symbol):
                 if namespace and namespace in index:
                     break
@@ -228,7 +228,7 @@ class Helper():
         if hint:
             def_hint = hint
             doc_hint = hint
-            if not ClassParser.is_native_hintable(hint) and not allow_native_hint:
+            if ClassParser.is_native_hint(hint) and not ClassParser.is_native_hintable(hint) and not allow_native_hint:
                 def_hint = ''
 
         return (def_hint, doc_hint)
