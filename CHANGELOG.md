@@ -55,3 +55,7 @@ Add option to enable php7 coding session
 - Add phpme_generate_test_command
 - Add setting: test_case_pattern, test_public_only, test_generate_content
 - Fix class method and properties parsing
+
+## 2017-12-27
+
+- Add total method/properties info

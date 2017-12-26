@@ -33,7 +33,7 @@ class PhpmeOverrideMethodCommand(sublime_plugin.TextCommand):
             if len(self.list_methods) > 0:
                 options = []
                 if self.abstract_only:
-                    options.append(['Override All', 'override all methods'])
+                    options.append(['Override All', 'override all methods ({} in total)'.format(len(self.list_methods))])
                 options.append(['Override Some', 'pick multiple method one by one'])
                 self.view.window().show_quick_panel(options+self.list_methods, self.on_method_selected)
             else:

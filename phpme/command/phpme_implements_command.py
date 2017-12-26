@@ -32,7 +32,7 @@ class PhpmeImplementsCommand(sublime_plugin.TextCommand):
         if self.collect_progress == 0:
             if len(self.list_methods) > 0:
                 options = [
-                    ['Implement All', 'implement all methods'],
+                    ['Implement All', 'implement all methods ({} in total)'.format(len(self.list_methods))],
                     ['Implement Some', 'pick multiple method one by one']
                 ]
                 self.view.window().show_quick_panel(options+self.list_methods, self.on_method_selected)

@@ -63,7 +63,7 @@ class PhpmeGenerateTestMethodCommand(sublime_plugin.TextCommand):
         if self.collect_progress == 0:
             if len(self.list_methods) > 0:
                 options = [
-                    ['Pick All', 'pick all method'],
+                    ['Pick All', 'pick all method ({} in total)'.format(len(self.list_methods))],
                     ['Pick Some', 'pick multiple method one by one']
                 ]
                 self.view.window().show_quick_panel(options+self.list_methods, self.on_method_selected)
