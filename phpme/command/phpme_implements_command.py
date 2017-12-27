@@ -32,7 +32,7 @@ class PhpmeImplementsCommand(sublime_plugin.TextCommand):
         if self.collect_progress == 0:
             if len(self.list_methods) > 0:
                 options = [
-                    ['Implement All', 'implement all methods ({} in total)'.format(len(self.list_methods))],
+                    ['Implement All', 'implement all methods {}'.format(Utils.property_info(len(self.list_methods)))],
                     ['Implement Some', 'pick multiple method one by one']
                 ]
                 self.view.window().show_quick_panel(options+self.list_methods, self.on_method_selected)
@@ -45,7 +45,7 @@ class PhpmeImplementsCommand(sublime_plugin.TextCommand):
             options = [['Done', 'done selecting method']]
             self.view.window().show_quick_panel(options+self.list_methods, self.on_method_selected)
         elif len(self.methods) > 0:
-            self.view.run_command('phpme_post_implements', {'methods': self.methods})
+            self.view.run_command('phpme_do_generate_method', {'methods': self.methods, 'job': 'implements'})
         else:
             self.helper.print_message('No method to implements')
 

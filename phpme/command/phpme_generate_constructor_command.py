@@ -1,6 +1,7 @@
 import sublime
 import sublime_plugin
 from ..helper import Helper
+from ..utils import Utils
 from ..parser.class_parser import ClassParser
 
 
@@ -28,7 +29,7 @@ class PhpmeGenerateConstructorCommand(sublime_plugin.TextCommand):
         if self.collect_progress == 0:
             if len(self.list_properties) > 0:
                 options = [
-                    ['Pick All', 'pick all properties ({} in total)'.format(len(self.list_properties))],
+                    ['Pick All', 'pick all properties {}'.format(Utils.property_info(len(self.list_properties)))],
                     ['Pick Some', 'pick multiple properties one by one'],
                     ['Pick None', 'pick no property']
                 ]

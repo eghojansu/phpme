@@ -2,10 +2,10 @@ import sublime_plugin
 from ..helper import Helper
 
 
-class PhpmePostOverrideMethodCommand(sublime_plugin.TextCommand):
-    """Do override methods"""
+class PhpmeDoGenerateMethodCommand(sublime_plugin.TextCommand):
+    """Do generate methods"""
 
-    def run(self, edit, methods):
+    def run(self, edit, methods, job = 'generate'):
         helper = Helper(self.view)
 
         arranged = helper.arrange_methods(methods)
@@ -20,5 +20,5 @@ class PhpmePostOverrideMethodCommand(sublime_plugin.TextCommand):
         point = region.end() - 1
 
         self.view.insert(edit, point, '\n\t' + ('\n\n\t'.join(arranged['methods']))+'\n')
-        helper.print_message('Successfully overrides: {}'.format(', '.join(arranged['arranged'])))
+        helper.print_message('Successfully ' + job + ': ' + (', '.join(arranged['arranged'])))
 

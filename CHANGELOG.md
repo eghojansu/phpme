@@ -59,3 +59,4 @@ Add option to enable php7 coding session
 ## 2017-12-27
 
 - Add total method/properties info
+- Reduce identic logic command

@@ -33,7 +33,7 @@ class PhpmeOverrideMethodCommand(sublime_plugin.TextCommand):
             if len(self.list_methods) > 0:
                 options = []
                 if self.abstract_only:
-                    options.append(['Override All', 'override all methods ({} in total)'.format(len(self.list_methods))])
+                    options.append(['Override All', 'override all methods {}'.format(Utils.method_info(len(self.list_methods)))])
                 options.append(['Override Some', 'pick multiple method one by one'])
                 self.view.window().show_quick_panel(options+self.list_methods, self.on_method_selected)
             else:
@@ -45,7 +45,7 @@ class PhpmeOverrideMethodCommand(sublime_plugin.TextCommand):
             options = [['Done', 'done selecting method']]
             self.view.window().show_quick_panel(options+self.list_methods, self.on_method_selected)
         elif len(self.methods) > 0:
-            self.view.run_command('phpme_post_override_method', {'methods': self.methods})
+            self.view.run_command('phpme_do_generate_method', {'methods': self.methods, 'job': 'overrides'})
         else:
             self.helper.print_message('No method to override')
 

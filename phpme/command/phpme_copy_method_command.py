@@ -58,7 +58,7 @@ class PhpmeCopyMethodCommand(sublime_plugin.TextCommand):
         if self.collect_progress == 0:
             if len(self.list_methods) > 0:
                 options = [
-                    ['Pick All', 'pick all method ({} in total)'.format(len(self.list_methods))],
+                    ['Pick All', 'pick all method {}'.format(Utils.method_info(len(self.list_methods)))],
                     ['Pick Some', 'pick multiple method one by one']
                 ]
                 self.view.window().show_quick_panel(options+self.list_methods, self.on_method_selected)
@@ -71,7 +71,7 @@ class PhpmeCopyMethodCommand(sublime_plugin.TextCommand):
             options = [['Done', 'done selecting method']]
             self.view.window().show_quick_panel(options+self.list_methods, self.on_method_selected)
         elif len(self.methods) > 0:
-            self.view.run_command('phpme_post_copy_method', {'methods': self.methods})
+            self.view.run_command('phpme_do_generate_method', {'methods': self.methods, 'job': 'copy'})
         else:
             self.helper.print_message('No method to generate')
 

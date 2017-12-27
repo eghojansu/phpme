@@ -7,10 +7,8 @@ from .phpme.command.phpme_expand_fqcn_command import PhpmeExpandFqcnCommand
 from .phpme.command.phpme_post_expand_fqcn_command import PhpmePostExpandFqcnCommand
 
 from .phpme.command.phpme_implements_command import PhpmeImplementsCommand
-from .phpme.command.phpme_post_implements_command import PhpmePostImplementsCommand
 
 from .phpme.command.phpme_override_method_command import PhpmeOverrideMethodCommand
-from .phpme.command.phpme_post_override_method_command import PhpmePostOverrideMethodCommand
 
 from .phpme.command.phpme_getter_setter_command import PhpmeGetterSetterCommand
 from .phpme.command.phpme_post_getter_setter_command import PhpmePostGetterSetterCommand
@@ -23,8 +21,7 @@ from .phpme.command.phpme_goto_definition_scope_command import PhpmeGotoDefiniti
 from .phpme.command.phpme_project_meta_command import PhpmeProjectMetaCommand
 
 from .phpme.command.phpme_copy_method_command import PhpmeCopyMethodCommand
-from .phpme.command.phpme_post_copy_method_command import PhpmePostCopyMethodCommand
 
 from .phpme.command.phpme_generate_test_method_command import PhpmeGenerateTestMethodCommand
 
-from .phpme.command.phpme_post_generate_method_command import PhpmePostGenerateMethodCommand
+from .phpme.command.phpme_do_generate_method_command import PhpmeDoGenerateMethodCommand

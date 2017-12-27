@@ -32,7 +32,7 @@ class PhpmeGetterSetterCommand(sublime_plugin.TextCommand):
         if self.collect_progress == 0:
             if len(self.list_properties) > 0:
                 options = [
-                    ['Generate All', 'generate all properties ({} in total)'.format(len(self.list_properties))],
+                    ['Generate All', 'generate all properties {}'.format(Utils.property_info(len(self.list_properties)))],
                     ['Generate Some', 'pick multiple properties one by one']
                 ]
                 self.view.window().show_quick_panel(options+self.list_properties, self.on_method_selected)
