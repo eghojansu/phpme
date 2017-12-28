@@ -88,8 +88,11 @@ class PhpmeGetterSetterCommand(sublime_plugin.TextCommand):
             setter_method = 'set{}'.format(name)
             var = '$' + pdef['name']
 
-            if (((mode & Constant.gen_getter) and (getter_method not in mdef['methods']))
-                or ((mode & Constant.gen_setter) and (setter_method not in mdef['methods']))):
+            getter_found = Utils.find(mdef['methods'], 'name', getter_method)
+            setter_found = Utils.find(mdef['methods'], 'name', setter_method)
+
+            if (((mode & Constant.gen_getter) and (not getter_found))
+                or ((mode & Constant.gen_setter) and (not setter_method))):
                 self.list_properties.append([var, pdef['hint'] if pdef['hint'] else 'mixed'])
                 pdef['uses'] = self.helper.decide_uses(pdef['uses'], mdef['uses'])
                 self.pending.append(pdef)

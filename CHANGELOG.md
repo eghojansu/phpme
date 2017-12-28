@@ -60,3 +60,7 @@ Add option to enable php7 coding session
 
 - Add total method/properties info
 - Reduce identic logic command
+
+## 2017-12-28
+
+- Fix generate getter/setter (not propose exists method)
