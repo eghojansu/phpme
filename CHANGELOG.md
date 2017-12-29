@@ -64,3 +64,7 @@ Add option to enable php7 coding session
 ## 2017-12-28
 
 - Fix generate getter/setter (not propose exists method)
+
+## 2017-12-29
+
+- Add log_message setting

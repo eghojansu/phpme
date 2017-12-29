@@ -271,6 +271,12 @@ Generate sample method content.
 
 Type: boolean, defaults to: true
 
+### log_message
+
+Log status message
+
+Type: boolean, defaults to: false
+
 
 ## Keybinding
 

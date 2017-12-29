@@ -18,6 +18,7 @@ class Helper():
         self.view = view
         # setting cache
         self.cache = {}
+        self.log_message = self.setting_get('log_message', False)
 
     def content(self):
         return self.view.substr(sublime.Region(0, self.view.size()))
@@ -83,7 +84,8 @@ class Helper():
         return namespaces
 
     def print_message(self, message):
-        print('[Phpme]', message)
+        if self.log_message:
+            print('[Phpme]', message)
         sublime.status_message(message)
 
     def e_file(self):

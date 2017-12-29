@@ -76,5 +76,9 @@
 
     // Generate sample method content
     // @type: boolean
-    "test_generate_content": true
+    "test_generate_content": true,
+
+    // Log status message
+    // @type: boolean
+    "log_message": false
 }
