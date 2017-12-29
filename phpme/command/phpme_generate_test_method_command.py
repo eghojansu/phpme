@@ -103,6 +103,7 @@ class PhpmeGenerateTestMethodCommand(sublime_plugin.TextCommand):
             else:
                 caller = '$this->{}->'.format(Utils.lcfirst(self.class_name))
 
+            prefix = '&' if method['name'][0] == '&' else ''
             args = re.findall('\$\w+', pdef.group(1)) if pdef.group(1) else []
             args_str = ' = null, '.join(args)
             if args:
@@ -110,7 +111,7 @@ class PhpmeGenerateTestMethodCommand(sublime_plugin.TextCommand):
 
             method['content'] = [
                 "\t$expected = 'you';",
-                '\t$result = {}{}({});'.format(caller, method['name'], args_str),
+                '\t$result ={} {}{}({});'.format(prefix, caller, method['name'].lstrip('&'), args_str),
                 '\t$this->assertEquals($expected, $result);'
             ]
 
