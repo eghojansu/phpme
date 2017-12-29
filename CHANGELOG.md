@@ -68,3 +68,4 @@ Add option to enable php7 coding session
 ## 2017-12-29
 
 - Add log_message setting
+- Fix generate test method, remove ampersand in method name

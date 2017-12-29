@@ -159,7 +159,7 @@ class PhpmeGenerateTestMethodCommand(sublime_plugin.TextCommand):
         for namespace in self.classes:
             mmdef = ClassParser.create(None, namespace[1]).parse()
             for method in mmdef['methods']:
-                test_name = 'test{}'.format(Utils.ucfirst(method['name']))
+                test_name = 'test{}'.format(Utils.ucfirst(method['name'].lstrip('&')))
                 found = Utils.find(self.mdef['methods'], 'name', test_name)
                 if not found and method['name'] not in Constant.magic_methods and test_name not in indexes and not method['abstract'] and (not public_only or method['visibility'] == 'public'):
                     method['test_name'] = test_name
