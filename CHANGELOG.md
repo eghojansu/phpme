@@ -70,3 +70,7 @@ Add option to enable php7 coding session
 - Add log_message setting
 - Fix generate test method, remove ampersand in method name
 - Fix generate test method, add ampersand suffix
+
+## 2018-01-27
+
+- Generate method now on first active cursor

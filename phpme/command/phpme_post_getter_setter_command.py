@@ -24,13 +24,7 @@ class PhpmePostGetterSetterCommand(sublime_plugin.TextCommand):
         # insert uses
         self.view.run_command('phpme_post_use_class', {'namespaces': self.uses})
 
-        # Find the closing brackets. We'll place the method
-        # stubs just before the last closing bracket.
-        closing_brackets = self.view.find_all('}')
-        region = closing_brackets[-1]
-        point = region.end() - 1
-
-        self.view.insert(edit, point, '\n\t' + ('\n\n\t'.join(self.methods)) +'\n')
+        self.view.insert(edit, self.view.sel()[0].end(), '\n\n\t'.join(self.methods))
         self.helper.print_message('Successfully generate properties {}'.format(title))
 
     def prepare(self, mode, properties):
