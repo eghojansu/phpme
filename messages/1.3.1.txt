@@ -1,0 +1,4 @@
+v1.3.1 2018-01-27
+-----------------
+
+- Change generate method placement to first cursor
