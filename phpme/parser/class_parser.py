@@ -262,7 +262,7 @@ class ClassParser:
                     'docblocks': self.get_docblocks(start_line),
                     'def': match.group(2),
                     'uses': self.find_uses_args(match.group(6)),
-                    'visibility': match.group(3),
+                    'visibility': match.group(3) if match.group(3) else 'public',
                     'static': (match.group(4) and (match.group(4).strip() == 'static')),
                     'abstract': (match.group(1) and (match.group(1).strip() == 'abstract'))
                 })

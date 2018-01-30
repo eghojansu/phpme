@@ -74,3 +74,8 @@ Add option to enable php7 coding session
 ## 2018-01-27
 
 - Generate method now on first active cursor
+
+
+## 2018-01-30
+
+- Add default visibility method
