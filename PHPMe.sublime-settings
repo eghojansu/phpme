@@ -27,10 +27,6 @@
     // @type: enum("none", "copy", "inheritdoc")
     "docblock_inherit": "none",
 
-    // Add leading backslash
-    // @type: boolean
-    "prefix_fqcn": true,
-
     // Generate docblocks for getter/setter
     // @type: boolean
     "generate_docblock": false,
@@ -80,5 +76,10 @@
 
     // Log status message
     // @type: boolean
-    "log_message": false
+    "log_message": false,
+
+    // Declare strict, this will append strict delcaration on first opening php tag
+    // when inserting namespace
+    // @type: boolean
+    "declare_strict": false
 }

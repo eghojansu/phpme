@@ -75,7 +75,14 @@ Add option to enable php7 coding session
 
 - Generate method now on first active cursor
 
-
 ## 2018-01-30
 
 - Add default visibility method
+
+## 2018-05-02
+
+- Add declare_strict option
+- Remove prefix_fqcn option
+- Rename Expand Fully Qualified Namespace Class to Expand FQCN
+- Add Expand FQCN (w/ Leading Backslash)
+- Edit insert namespace now can be done without opening php tag

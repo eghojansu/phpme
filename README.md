@@ -2,7 +2,7 @@
 
 Make your PHP coding session more fun than ever.
 
-This plugin developed based on [PHP Companion][4] plugin.
+This plugin developed based on [PHP Companion][4] plugin, but works differently.
 
 ## Installation
 
@@ -11,9 +11,11 @@ This plugin developed based on [PHP Companion][4] plugin.
 You can install this plugin easily with [Sublime Package Control][5].
 
 Then there is two option:
-- Search for PHPMe in package control, select install then you're ready.
+- ~~Search for PHPMe in package control, select install then you're ready.~~
 - Add this plugin repository [https://github.com/eghojansu/phpme.git][2].
   (`Package Control: Add Repository` to insert repository url).
+
+> Currently this package was not accepted by Sublime Package [#6793][7]
 
 ### Download Manually
 
@@ -188,12 +190,6 @@ Copy comment doc from parent or interface to implemented class.
 
 Type: string, valid options are "none", "copy" or "inheritdoc" defaults to "none"
 
-### prefix_fqcn
-
-Set true, to add leading backslash when performing `phpme_expand_fqcn`.
-
-Type: boolean, defaults to true.
-
 ### generate_docblock
 
 Generate docblocks for getter, setter and constructor.
@@ -277,6 +273,13 @@ Log status message
 
 Type: boolean, defaults to: false
 
+### declare_strict
+
+Declare strict, this will append strict delcaration on first opening php tag
+_when inserting namespace_
+
+Type: boolean, defaults to: false
+
 
 ## Keybinding
 
@@ -300,7 +303,6 @@ This plugin do not provide keybindings. You will have to install your own shortc
 - This plugin works based on Regex. If you feel this plugin sucks detecting your code, please let me know.
 
   [Submit issues][3].
-- We do not support multiple class declaration in one file. As we use regex to detect curly brace (`}`) as the end of class.
 
 
 ```sh
@@ -316,3 +318,4 @@ ekokurniawan
 [4]: https://packagecontrol.io/packages/PHP%20Companion
 [5]: https://packagecontrol.io/installation
 [6]: https://docs.python.org/2/library/datetime.html#strftime-and-strptime-behavior
+[7]: https://github.com/wbond/package_control_channel/pull/6793

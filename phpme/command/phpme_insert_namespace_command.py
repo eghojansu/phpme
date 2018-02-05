@@ -14,14 +14,13 @@ class PhpmeInsertNamespaceCommand(sublime_plugin.TextCommand):
 
         if self.helper.not_file():
             self.helper.e_file()
-        elif self.helper.not_php():
-            self.helper.e_php()
         else:
             namespace = self.find_namespace()
-            if self.replace_namespace(namespace) or self.insert_namespace(namespace):
-                self.helper.print_message('Inserted namespace: "{}"'.format(namespace))
+            if self.replace_namespace(namespace):
+                self.helper.print_message('Updated namespace: "{}"'.format(namespace))
             else:
-                self.helper.e_scope()
+                self.insert_namespace(namespace)
+                self.helper.print_message('Inserted namespace: "{}"'.format(namespace))
 
     def replace_namespace(self, namespace):
         region = self.view.find(r'^namespace\s+[^;]+;', 0)
@@ -32,11 +31,18 @@ class PhpmeInsertNamespaceCommand(sublime_plugin.TextCommand):
 
     def insert_namespace(self, namespace):
         region = self.view.find(r"<\?php", 0)
-        if not region.empty():
-            line = self.view.line(region)
-            line_content = '\n\nnamespace {};'.format(namespace)
-            self.view.insert(self.edit, line.end(), line_content)
-            return True
+        declare = ' declare(strict_types=1);' if self.helper.setting_get('declare_strict') else ''
+        line_content = '\n\nnamespace {};'.format(namespace)
+
+        if region.empty():
+            self.view.insert(self.edit, 0, '<?php' + declare + line_content)
+        else:
+            declare_region = self.view.find(r'<\?php\h+\(*declare[^;]+', 0)
+            if declare_region:
+                line = self.view.line(declare_region)
+            else:
+                line = self.view.line(region)
+            self.view.insert(self.edit, line.end(), declare + line_content)
 
     def find_namespace(self):
         project_dir = self.helper.project_dir() + os.sep

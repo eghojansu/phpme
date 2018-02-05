@@ -6,14 +6,14 @@ from ..helper import Helper
 class PhpmeExpandFqcnCommand(sublime_plugin.TextCommand):
     """Expand classes to fqcn"""
 
-    def run(self, edit):
+    def run(self, edit, root = False):
         self.pending = {}
         # prepared symbol
         self.symbols = {}
         self.notfound = []
         self.invalid = []
         self.helper  = Helper(self.view)
-        self.prefix = '\\' if self.helper.setting_get('prefix_fqcn', True) else ''
+        self.prefix = '\\' if root else ''
 
         if self.helper.not_scope():
             self.helper.e_scope()

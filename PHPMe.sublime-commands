@@ -8,8 +8,13 @@
         "command": "phpme_use_class"
     },
     {
-        "caption": "PHPMe: Expand Fully Qualified Class Name",
+        "caption": "PHPMe: Expand FQCN",
         "command": "phpme_expand_fqcn"
+    },
+    {
+        "caption": "PHPMe: Expand FQCN (w/ Leading Backslash)",
+        "command": "phpme_expand_fqcn",
+        "args": {"root": true}
     },
     {
         "caption": "PHPMe: Implement Interface",

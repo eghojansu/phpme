@@ -1,0 +1,9 @@
+v1.3.2 2018-02-05
+-----------------
+
+- Add default visibility method
+- Add declare_strict option
+- Remove prefix_fqcn option
+- Rename Expand Fully Qualified Namespace Class to Expand FQCN
+- Add Expand FQCN (w/ Leading Backslash)
+- Edit insert namespace now can be done without opening php tag
