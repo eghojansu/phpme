@@ -157,6 +157,7 @@ class PhpmeGenerateTestMethodCommand(sublime_plugin.TextCommand):
         indexes = []
         public_only = self.helper.setting_get('test_public_only', True)
 
+        rrgx = re.compile(r'\h*:\h*.+$')
         for namespace in self.classes:
             mmdef = ClassParser.create(None, namespace[1]).parse()
             for method in mmdef['methods']:
@@ -167,6 +168,7 @@ class PhpmeGenerateTestMethodCommand(sublime_plugin.TextCommand):
                     method['uses'] = []
                     indexes.append(method['name'])
                     self.list_methods.append([method['name'], namespace[0]])
+                    method['def'] = rrgx.sub('', method['def'])
                     self.pending_methods.append(method);
 
         self.method_collected = True

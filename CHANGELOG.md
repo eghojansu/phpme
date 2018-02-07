@@ -86,3 +86,7 @@ Add option to enable php7 coding session
 - Rename Expand Fully Qualified Namespace Class to Expand FQCN
 - Add Expand FQCN (w/ Leading Backslash)
 - Edit insert namespace now can be done without opening php tag
+
+## 2018-05-07
+
+- Remove return type on test method generation
