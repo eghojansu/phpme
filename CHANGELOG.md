@@ -90,3 +90,7 @@ Add option to enable php7 coding session
 ## 2018-05-07
 
 - Remove return type on test method generation
+
+## 2018-05-08
+
+- Modify default method test stub

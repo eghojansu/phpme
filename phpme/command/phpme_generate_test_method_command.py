@@ -110,7 +110,7 @@ class PhpmeGenerateTestMethodCommand(sublime_plugin.TextCommand):
                 args_str += ' = null'
 
             method['content'] = [
-                "\t$expected = 'you';",
+                "\t$expected = 'foo';",
                 '\t$result ={} {}{}({});'.format(prefix, caller, method['name'].lstrip('&'), args_str),
                 '\t$this->assertEquals($expected, $result);'
             ]
