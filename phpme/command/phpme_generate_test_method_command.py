@@ -89,6 +89,7 @@ class PhpmeGenerateTestMethodCommand(sublime_plugin.TextCommand):
         method = self.pending_methods[index]
 
         new_def = method['def']
+        print(new_def)
         new_def = re.sub(r'static\s+', '', new_def)
         new_def = re.sub(r'(private|protected)\s+', 'public ', new_def)
         new_def = re.sub(method['name'] + r'\s*\(', method['test_name'] + '(', new_def)
@@ -105,14 +106,10 @@ class PhpmeGenerateTestMethodCommand(sublime_plugin.TextCommand):
 
             prefix = '&' if method['name'][0] == '&' else ''
             args = re.findall('\$\w+', pdef.group(1)) if pdef.group(1) else []
-            args_str = ' = null, '.join(args)
-            if args:
-                args_str += ' = null'
+            args_str = ', '.join(args)
 
             method['content'] = [
-                "\t$expected = 'foo';",
-                '\t$result ={} {}{}({});'.format(prefix, caller, method['name'].lstrip('&'), args_str),
-                '\t$this->assertEquals($expected, $result);'
+                "\t$this->assertEquals('foo', {}{}({}));".format(caller, method['name'].lstrip('&'), args_str)
             ]
 
         method['name'] = method['test_name']
@@ -166,6 +163,7 @@ class PhpmeGenerateTestMethodCommand(sublime_plugin.TextCommand):
                 if not found and method['name'] not in Constant.magic_methods and test_name not in indexes and not method['abstract'] and (not public_only or method['visibility'] == 'public'):
                     method['test_name'] = test_name
                     method['uses'] = []
+                    method['docblocks'] = None
                     indexes.append(method['name'])
                     self.list_methods.append([method['name'], namespace[0]])
                     method['def'] = rrgx.sub('', method['def'])

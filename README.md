@@ -88,8 +88,7 @@ To use this feature you need to put cursor on a method name, then trigger this c
 ### project_meta
 
 Generate project meta for current file. Template can be configured, see setting below.
-
-To use this feature you do not need to put cursor on valid symbol, just trigger this command.
+To use this feature, open command pallet then trigger this command. The project meta will be inserted after first php open tag.
 
 ### copy_method
 

@@ -31,7 +31,7 @@ class PhpmeInsertNamespaceCommand(sublime_plugin.TextCommand):
 
     def insert_namespace(self, namespace):
         region = self.view.find(r"<\?php", 0)
-        declare = ' declare(strict_types=1);' if self.helper.setting_get('declare_strict') else ''
+        declare = '\n\ndeclare(strict_types=1);' if self.helper.setting_get('declare_strict') else ''
         line_content = '\n\nnamespace {};'.format(namespace)
 
         if region.empty():

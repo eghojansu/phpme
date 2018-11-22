@@ -94,3 +94,11 @@ Add option to enable php7 coding session
 ## 2018-05-08
 
 - Modify default method test stub
+
+## 2018-02-19
+
+- Fix bug on project_meta_command
+- Change behaviour of project_meta_command
+- Simplify generate test method stub
+- Remove docblock on test method generation
+- Fix bug on generate setter

@@ -18,8 +18,6 @@ class PhpmeProjectMetaCommand(sublime_plugin.TextCommand):
             self.helper.e_file()
         elif self.helper.not_php():
             self.helper.e_php()
-        elif self.helper.not_scope():
-            self.helper.e_scope()
         else:
             self.insert_meta(edit)
             self.helper.print_message('Project meta has been inserted')
@@ -64,7 +62,9 @@ class PhpmeProjectMetaCommand(sublime_plugin.TextCommand):
             r'Created at {time(%b %d, %Y %H:%M)}'
         ]))
         for key, replace in replaces.items():
-            line_content = line_content.replace('{'+key+'}', replace)
+            if not replace:
+                replace = '~';
+            line_content = line_content.replace('{'+key+'}', replace.strip())
 
         match_time = re.search(r'\{time(?:\(([^\)]*)\))?\}', line_content)
         if match_time:
@@ -72,4 +72,11 @@ class PhpmeProjectMetaCommand(sublime_plugin.TextCommand):
 
         line_content = '\n\n/**\n * ' + line_content + '\n */'
 
-        self.view.insert(edit, line.end(), line_content)
+        region = self.view.find(r"<\?php", 0)
+
+        if region.empty():
+            declare = '\n\ndeclare(strict_types=1);' if self.helper.setting_get('declare_strict') else ''
+            self.view.insert(edit, 0, '<?php' + line_content + declare)
+        else:
+            line = self.view.line(region)
+            self.view.insert(edit, line.end(), line_content)

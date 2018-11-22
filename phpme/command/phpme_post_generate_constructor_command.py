@@ -27,9 +27,10 @@ class PhpmePostGenerateConstructorCommand(sublime_plugin.TextCommand):
         content = []
         docblocks = [
             '/**',
-            ' * Class constructor',
-            ' *',
+            ' * Class constructor.',
         ]
+        if len(properties) > 0:
+            docblocks += [' *']
         for pdef in properties:
             hint = self.helper.decide_hint(pdef['hint'], allow_native_hint)
             default = ' = null' if hint[0] and hint_default_null else ''

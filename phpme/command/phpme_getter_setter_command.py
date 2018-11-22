@@ -25,6 +25,7 @@ class PhpmeGetterSetterCommand(sublime_plugin.TextCommand):
             if self.helper.not_class(mdef, ['class']):
                 self.helper.e_class()
             else:
+                self.cname = mdef['name']
                 self.find_variables(mdef, mode)
                 self.run_schedule()
 
@@ -47,7 +48,8 @@ class PhpmeGetterSetterCommand(sublime_plugin.TextCommand):
         elif len(self.properties) > 0:
             self.view.run_command('phpme_post_getter_setter', {
                 'properties': self.properties,
-                'mode': self.mode
+                'mode': self.mode,
+                'cname': self.cname
             })
         else:
             self.helper.print_message('No method to generate')
@@ -91,8 +93,10 @@ class PhpmeGetterSetterCommand(sublime_plugin.TextCommand):
             getter_found = Utils.find(mdef['methods'], 'name', getter_method)
             setter_found = Utils.find(mdef['methods'], 'name', setter_method)
 
-            if (((mode & Constant.gen_getter) and (not getter_found))
-                or ((mode & Constant.gen_setter) and (not setter_method))):
+            g = (mode & Constant.gen_getter) and (not getter_found)
+            s = (mode & Constant.gen_setter) and (not setter_found)
+
+            if g or s:
                 self.list_properties.append([var, pdef['hint'] if pdef['hint'] else 'mixed'])
                 pdef['uses'] = self.helper.decide_uses(pdef['uses'], mdef['uses'])
                 self.pending.append(pdef)

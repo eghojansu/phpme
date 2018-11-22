@@ -246,6 +246,7 @@ class ClassParser:
         """Recognize method declaration in class"""
         if self.incontext['class']:
             start_line = line
+            # TODO: refactor match method
             if re.search(r'(abstract\s+)?((public|protected|private)?(\s+static)?\s*function\s*([&|\w]+))', line):
                 closed = lambda: '{' in line or line.strip().endswith(';')
                 while not closed():

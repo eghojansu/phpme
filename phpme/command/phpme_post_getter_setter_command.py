@@ -7,9 +7,10 @@ from ..constant import Constant
 class PhpmePostGetterSetterCommand(sublime_plugin.TextCommand):
     """Do generate getter setter"""
 
-    def run(self, edit, mode, properties):
+    def run(self, edit, mode, properties, cname):
         self.uses = []
         self.methods = []
+        self.cname = cname;
         self.helper = Helper(self.view)
 
         prefixes = []
@@ -52,11 +53,15 @@ class PhpmePostGetterSetterCommand(sublime_plugin.TextCommand):
             line = 'public function {}()'.format(method)
             content = ['\treturn $this->{};'.format(prop)]
 
+        hint = self.helper.decide_hint(pdef['hint'], option['allow_native_hint'])
+        if hint[0]:
+            line += ': ' + hint[0]
+
         docblocks = None
         if option['generate_docblock']:
             docblocks = '\n\t'.join([
                 '/**',
-                ' * Get {}'.format(prop),
+                ' * Get {}.'.format(prop),
                 ' *',
                 ' * @return {}'.format(pdef['hint'] if pdef['hint'] else 'mixed'),
                 ' */'
@@ -86,20 +91,21 @@ class PhpmePostGetterSetterCommand(sublime_plugin.TextCommand):
             if option['setter_chainable']:
                 content.append('')
                 content.append('\treturn $this;')
+
+                if option['allow_native_hint']:
+                    line += ': ' + self.cname
         self.uses += pdef['uses']
 
         docblocks = None
         if option['generate_docblock']:
             docblocks = [
                 '/**',
-                ' * Set {}'.format(prop),
+                ' * Set {}.'.format(prop),
                 ' *',
                 ' * @param {} ${}'.format(hint[1], prop)
             ]
             if option['setter_chainable'] and not pdef['static']:
-                docblocks += [' * @return $this']
-            else:
-                docblocks += [' * @return void']
+                docblocks += [' *', ' * @return ' + self.cname]
             docblocks += [' */']
             docblocks = '\n\t'.join(docblocks)
 
